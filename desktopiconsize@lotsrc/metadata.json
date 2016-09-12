@@ -1,7 +1,7 @@
 {
-	"uuid": "desktopiconsize@lotsrc",
-	"name": "Desktop Icon Size",
-	"description": "Change desktop icons size and position",
+    "uuid": "desktopiconsize@lotsrc",
+    "name": "Desktop Icon Size",
+    "description": "Change desktop icons size and position",
     "version": "1.0",
-	"max-instances": "-1"
+    "max-instances": "-1"
 }

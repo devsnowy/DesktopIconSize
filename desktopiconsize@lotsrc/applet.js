@@ -9,30 +9,29 @@ const Util = imports.misc.util;
 const Lang = imports.lang;
 
 function launchPython(path, params) {
-
     Util.spawnCommandLine("python3 " + path + "/desktopiconsize.py" + params);
 }
 
 function MyApplet (metadata, orientation, panel_height, instance_id) {
-	this._init(metadata, orientation, panel_height, instance_id);
+    this._init(metadata, orientation, panel_height, instance_id);
 }
 
 MyApplet.prototype = {
 
-	__proto__: Applet.IconApplet.prototype,
+    __proto__: Applet.IconApplet.prototype,
 
-	_init: function (metadata, orientation, panel_height, instance_id) {
+    _init: function (metadata, orientation, panel_height, instance_id) {
 
         // Initialize
 
-		Applet.IconApplet.prototype._init.call(this, orientation, panel_height, instance_id);
-		this._metadata = metadata;
-		this.set_applet_icon_path(this._metadata.path + "/icon.png");
-		this.set_applet_tooltip("Desktop Icon Size");
+        Applet.IconApplet.prototype._init.call(this, orientation, panel_height, instance_id);
+        this._metadata = metadata;
+        this.set_applet_icon_path(this._metadata.path + "/icon.png");
+        this.set_applet_tooltip("Desktop Icon Size");
 
-		// Create menu
+        // Create menu
 
-		this.menuManager = new PopupMenu.PopupMenuManager(this);
+        this.menuManager = new PopupMenu.PopupMenuManager(this);
         this.menu = new Applet.AppletPopupMenu(this, orientation);
         this.menuManager.addMenu(this.menu);
 
