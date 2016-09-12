@@ -11,13 +11,13 @@ Applet to change desktop icons size and position in Cinnamon
 ## Requeriments
 
 * Cinnamon desktop environment
-* nemo file browser managing the desktop (default in Linux Mint)
+* Nemo file browser managing the desktop (default in Linux Mint)
 * Python 3.4
 
-It is recommended setting the option *Automatically arrange items* disabled. 
+It is recommended setting the desktop context menu option *Keep aligned* disabled. 
 
 ## Installing
 
 * Download the repository (Download ZIP option in Clone or download)
 * Copy the **desktopiconsize@lotsrc** directory to **~/.local/share/cinnamon/applets/**
-* Add the applet to a panel by right clicking it and selecting Add Applet. Choose DesktopIconSize
+* Add the applet to a panel by right clicking it and selecting *Add applets to the panel*. Choose DesktopIconSize
