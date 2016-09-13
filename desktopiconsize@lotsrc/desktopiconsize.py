@@ -36,42 +36,42 @@ gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk
 
 WINDOW_TITLE = "Desktop Icon Size"
-CONFIGURATION_FILE  = ".desktopiconsize.conf"
+CONFIGURATION_FILE = ".desktopiconsize.conf"
 
 # If changed these must end with /
 
-OVERRIDE_HOME_PATH    = None
+OVERRIDE_HOME_PATH = None
 OVERRIDE_DESKTOP_PATH = None
-OVERRIDE_CONFIG_PATH  = None
+OVERRIDE_CONFIG_PATH = None
 
 # This could be changed to work with other file managers
 
-STRING_SCALE_SYSTEM    = "icon-scale"
+STRING_SCALE_SYSTEM = "icon-scale"
 STRING_POSITION_SYSTEM = "nemo-icon-position"
-SYSTEM_ICONS_FILE      = ".config/nemo/desktop-metadata"
+SYSTEM_ICONS_FILE = ".config/nemo/desktop-metadata"
 
 NUM_PROFILES = 4
 
-MARGIN_TOP_DEFAULT    = 100
+MARGIN_TOP_DEFAULT = 100
 MARGIN_BOTTOM_DEFAULT = 200
-MARGIN_LEFT_DEFAULT   = 120
-MARGIN_RIGHT_DEFAULT  = 150
+MARGIN_LEFT_DEFAULT = 120
+MARGIN_RIGHT_DEFAULT = 150
 
-GRID_WIDTH_DEFAULT  = 150
+GRID_WIDTH_DEFAULT = 150
 GRID_HEIGHT_DEFAULT = 150
 
 BAR_ITEMS_DEFAULT = 5
-BAR_POSX_DEFAULT  = 50
-BAR_POSY_DEFAULT  = 50
+BAR_POSX_DEFAULT = 50
+BAR_POSY_DEFAULT = 50
 
 ROUND_START_DEFAULT = 270
-ROUND_STEP_DEFAULT  = 15
-ROUND_ANGLE_DELTA   = 0.5
+ROUND_STEP_DEFAULT = 15
+ROUND_ANGLE_DELTA = 0.5
 
 MAIN_BORDER = 5
-BOX_BORDER  = 5
-PACK_SPIN   = 2
-LOG_BORDER  = 2
+BOX_BORDER = 5
+PACK_SPIN = 2
+LOG_BORDER = 2
 RESIZE_VERTICAL_DELTA = 100
 
 LAYOUTS = ["Horizontal",
@@ -86,6 +86,7 @@ BAR_TYPES = ["None",
 
 log_data = ""
 
+
 class DesktopElement:
     """A shortcut in the desktop"""
 
@@ -97,12 +98,12 @@ class DesktopElement:
         self.is_user = is_user          # Exists as a file in desktop folder, false for Computer, Home, Trash, Network and mounted volumes
 
     def display_name(self):
-        posDesktop = self.name.find(".desktop")
-        if posDesktop != -1:
-            return self.name[:posDesktop]
-        posVolume = self.name.find(".volume")
-        if posVolume != -1:
-            return self.name[:posVolume]
+        pos_desktop = self.name.find(".desktop")
+        if pos_desktop != -1:
+            return self.name[:pos_desktop]
+        pos_volume = self.name.find(".volume")
+        if pos_volume != -1:
+            return self.name[:pos_volume]
         return self.name
 
     def set_metadata(self, cfg, base_path, scale, x, y, just_scale):
@@ -130,8 +131,9 @@ LinearPositionGenerator
 RoundPositionGenerator
 """
 
+
 class LinearPositionGenerator:
-    """Allows 4 diferent ways of moving across the screen, horizontal/vertical with or without alternation"""
+    """Allows 4 different ways of moving across the screen, horizontal/vertical with or without alternation"""
 
     def __init__(self, is_horizontal, x, y, grid_width, grid_height, margin1, margin2, alternate, position_alternate):
         self.alternate = alternate
@@ -183,7 +185,7 @@ class RoundPositionGenerator:
 
 
 class Organization:
-    """Paramters used to generate the icon layout"""
+    """Parameters used to generate the icon layout"""
 
     def __init__(self, screen_width, screen_height, system_metadada_path, desktop_path, elements, order, manage_system_icons):
         self.layout = 0
@@ -379,7 +381,6 @@ class DISWindow(Gtk.Window):
             size = self.get_size()
             self.resize(size[0], size[1] - RESIZE_VERTICAL_DELTA)
 
-
     def set_organization(self, org):
         self.apply_on_change = False
         self.combo_layout.set_active(org.layout)
@@ -529,8 +530,6 @@ class DISWindow(Gtk.Window):
         global log_data
         log_data += text + "\n"
         if update_ui:
-            #end_iter = self.textview_log_buffer.get_end_iter()
-            #self.textview_log_buffer.insert(end_iter, self.log_data + "\n")
             self.textview_log_buffer.set_text(log_data)
 
     def create_version(self):
@@ -539,7 +538,6 @@ class DISWindow(Gtk.Window):
         self.box_page_settings.pack_end(self.label_version, False, False, 10)
 
     def create_combo_layouts(self):
-
         self.box_layouts = create_vbox(BOX_BORDER)
 
         self.label_layouts = Gtk.Label("Layout", xalign=0)
@@ -678,7 +676,6 @@ class DISWindow(Gtk.Window):
         self.box_bar_right.pack_start(self.label_bar_posx, False, False, 0)
         self.box_bar_right.pack_start(self.spin_bar_posx, False, False, PACK_SPIN)
 
-
         self.box_bar.pack_start(self.box_bar_left, False, False, 0)
         self.box_bar.pack_end(self.box_bar_right, False, False, 0)
 
@@ -689,7 +686,6 @@ class DISWindow(Gtk.Window):
         self.box_icon_left.add(self.box_bar_all)
 
     def create_ui_round_options(self, screen_width, screen_height):
-
         self.box_round_all = create_vbox(0)
 
         self.box_round_center = create_hbox(BOX_BORDER)
@@ -1243,6 +1239,7 @@ def reload_elements(window):
         window.organizations[i].update_elements(window)
     window.update_list_elements(window.elements, window.order_elements)
 
+
 class ProfileHolder:
 
     def __init__(self):
@@ -1290,6 +1287,7 @@ def set_icon_scale(value):
 
 def clamp(n, smallest, largest):
     return max(smallest, min(n, largest))
+
 
 class UnusedWindow(Gtk.Window):
     """This window is just used to get the monitor dimennsions"""

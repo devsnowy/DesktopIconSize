@@ -23,7 +23,7 @@ const Util = imports.misc.util;
 const Lang = imports.lang;
 
 function launchPython(path, params) {
-    Util.spawnCommandLine("python3 " + path + "/desktopiconsize.py" + params);
+    Util.spawnCommandLine("/usr/bin/python3 " + path + "/desktopiconsize.py" + params);
 }
 
 function MyApplet (metadata, orientation, panel_height, instance_id) {
@@ -40,7 +40,7 @@ MyApplet.prototype = {
 
         Applet.IconApplet.prototype._init.call(this, orientation, panel_height, instance_id);
         this._metadata = metadata;
-        this.set_applet_icon_path(this._metadata.path + "/icon.png");
+        this.set_applet_icon_path(this._metadata.path + "/iconpanel.png");
         this.set_applet_tooltip("Desktop Icon Size");
 
         // Create menu
@@ -60,19 +60,19 @@ MyApplet.prototype = {
         // Handle events
 
         this.diswindow.connect('activate', Lang.bind(this, function() {
-            launchPython(this._metadata.path,"")
+            launchPython(this._metadata.path, "")
         }));
         this.profile1.connect('activate', Lang.bind(this, function() {
-            launchPython(this._metadata.path," -p 0")
+            launchPython(this._metadata.path, " -p 0")
         }));
         this.profile2.connect('activate', Lang.bind(this, function() {
-            launchPython(this._metadata.path," -p 1")
+            launchPython(this._metadata.path, " -p 1")
         }));
         this.profile3.connect('activate', Lang.bind(this, function() {
-            launchPython(this._metadata.path," -p 2")
+            launchPython(this._metadata.path, " -p 2")
         }));
         this.profile4.connect('activate', Lang.bind(this, function() {
-            launchPython(this._metadata.path," -p 3")
+            launchPython(this._metadata.path, " -p 3")
         }));
 
         // Add menu items to menu
@@ -86,11 +86,11 @@ MyApplet.prototype = {
 	},
 
 	on_applet_clicked: function() {
-		this.menu.toggle();
+        this.menu.toggle();
 	},
 
 };
 
 function main (metadata, orientation, panel_height, instance_id) {
-	return new MyApplet(metadata, orientation, panel_height, instance_id);
+    return new MyApplet(metadata, orientation, panel_height, instance_id);
 }
