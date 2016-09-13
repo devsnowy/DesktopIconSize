@@ -60,19 +60,19 @@ MyApplet.prototype = {
         // Handle events
 
         this.diswindow.connect('activate', Lang.bind(this, function() {
-            launchPython(this._metadata.path, "")
+            launchPython(this._metadata.path, "");
         }));
         this.profile1.connect('activate', Lang.bind(this, function() {
-            launchPython(this._metadata.path, " -p 0")
+            launchPython(this._metadata.path, " -p 0");
         }));
         this.profile2.connect('activate', Lang.bind(this, function() {
-            launchPython(this._metadata.path, " -p 1")
+            launchPython(this._metadata.path, " -p 1");
         }));
         this.profile3.connect('activate', Lang.bind(this, function() {
-            launchPython(this._metadata.path, " -p 2")
+            launchPython(this._metadata.path, " -p 2");
         }));
         this.profile4.connect('activate', Lang.bind(this, function() {
-            launchPython(this._metadata.path, " -p 3")
+            launchPython(this._metadata.path, " -p 3");
         }));
 
         // Add menu items to menu
@@ -87,7 +87,7 @@ MyApplet.prototype = {
 
     on_applet_clicked: function() {
         this.menu.toggle();
-    },
+    }
 
 };
 
