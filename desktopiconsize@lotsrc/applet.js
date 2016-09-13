@@ -83,11 +83,11 @@ MyApplet.prototype = {
         this.menu.addMenuItem(this.profile2);
         this.menu.addMenuItem(this.profile3);
         this.menu.addMenuItem(this.profile4);
-	},
+    },
 
-	on_applet_clicked: function() {
+    on_applet_clicked: function() {
         this.menu.toggle();
-	},
+    },
 
 };
 
