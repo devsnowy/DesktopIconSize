@@ -361,7 +361,7 @@ class DISWindow(Gtk.Window):
         self.log("Init complete")
 
     def load_icon(self):
-        dir_file = formatDirectoryPath(os.path.dirname(os.path.realpath(__file__)))
+        dir_file = format_directory_path(os.path.dirname(os.path.realpath(__file__)))
         full_icon_path = dir_file + "icon.png"
         try:
             self.set_icon_from_file(full_icon_path)
@@ -947,17 +947,20 @@ class DISWindow(Gtk.Window):
             if self.manage_system_elements or elements[elem].is_user:
                 self.liststore_elements.append([elements[elem].display_name()])
 
-def formatDirectoryPath(path):
+
+def format_directory_path(path):
     """Returns path with / at the end"""
     path = path.strip()
     if not path.endswith('/'):
         path += "/"
     return path
 
-def getHomePath():
+
+def get_home_path():
     if OVERRIDE_HOME_PATH is not None:
         return OVERRIDE_HOME_PATH
-    return formatDirectoryPath(os.path.expanduser("~"))
+    return format_directory_path(os.path.expanduser("~"))
+
 
 def get_desktop_path():
     if OVERRIDE_DESKTOP_PATH is not None:
@@ -970,21 +973,25 @@ def get_desktop_path():
     except:
         pass
     if ret_dir is None:
-        ret_dir = getHomePath() + "Desktop/"
-    return formatDirectoryPath(ret_dir)
+        ret_dir = get_home_path() + "Desktop/"
+    return format_directory_path(ret_dir)
+
 
 def get_system_metadata_path():
-    return getHomePath() + SYSTEM_ICONS_FILE
+    return get_home_path() + SYSTEM_ICONS_FILE
+
 
 def get_config_file_path():
     if OVERRIDE_CONFIG_PATH is not None:
         return OVERRIDE_CONFIG_PATH
-    return getHomePath() + "" + CONFIGURATION_FILE
+    return get_home_path() + "" + CONFIGURATION_FILE
+
 
 def get_desktop_user_elements():
     """Returns a list of all files and directories in the desktop"""
-    desktopPath = get_desktop_path()
-    return os.listdir(desktopPath)
+    desktop_path = get_desktop_path()
+    return os.listdir(desktop_path)
+
 
 def get_desktop_list(system_elements_path):
     todos = get_desktop_user_elements()
@@ -997,39 +1004,43 @@ def get_desktop_list(system_elements_path):
     if system_elements_path is not None:
         try:
             c = read_text_file(system_elements_path)
-            systemElements = get_desktop_system_elements(c)
-            log("Found " + str(len(systemElements)) + " system elements :")
-            for s in systemElements:
+            system_elements = get_desktop_system_elements(c)
+            log("Found " + str(len(system_elements)) + " system elements :")
+            for s in system_elements:
                 log(s.name)
-            return systemElements + res
+            return system_elements + res
         except:
             return res
     return res
 
+
 def parse_system_item(cad):
-    firstClosingBracket = cad.find("]")
-    if firstClosingBracket == -1:
+    first_closing_bracket = cad.find("]")
+    if first_closing_bracket == -1:
         return "", -1, -1, -1
-    name = cad[:firstClosingBracket]
+    name = cad[:first_closing_bracket]
     return DesktopElement(name, 1, 0, 0, False)
+
 
 def read_text_file(path):
     f = open(path, 'r')
-    texto = f.read()
+    text = f.read()
     f.close()
-    return texto
+    return text
+
 
 def get_desktop_system_elements(cad):
     res = []
-    firstBracket = cad.find("[")
-    if firstBracket == -1:
+    first_bracket = cad.find("[")
+    if first_bracket == -1:
         return res
-    parts = cad[firstBracket + 1:].split("[")
+    parts = cad[first_bracket + 1:].split("[")
     for p in parts:
         e = parse_system_item(p)
         if e.name != "directory":
             res.append(e)
     return res
+
 
 def set_file_metadata(basePath, fileName, scale, x, y, just_scale):
     try:
@@ -1039,15 +1050,18 @@ def set_file_metadata(basePath, fileName, scale, x, y, just_scale):
     except subprocess.CalledProcessError as e:
         pass
 
+
 def open_file_metadata_system(system_metadata_path):
     cfg = configparser.ConfigParser()
     #log("Reading system metadata file " + system_metadata_path)
     cfg.read(system_metadata_path)
     return cfg
 
+
 def close_file_metadata_system(cfg, system_metadata_path):
     with open(system_metadata_path, 'wt') as configfile:
         cfg.write(configfile, space_around_delimiters=False)
+
 
 def set_file_metadata_system(cfg, name, scale, x, y, just_scale):
     if not name in cfg:
@@ -1056,6 +1070,7 @@ def set_file_metadata_system(cfg, name, scale, x, y, just_scale):
     cfg[name][STRING_SCALE_SYSTEM] = str(scale)
     if not just_scale:
         cfg[name][STRING_POSITION_SYSTEM] = str(x) + "," + str(y)
+
 
 def refresh_items(basePath, elements):
     for e in elements:
@@ -1067,9 +1082,11 @@ def refresh_items(basePath, elements):
             except subprocess.CalledProcessError as e:
                 pass
 
+
 def write_config_file(config):
     with open(get_config_file_path(), 'w') as configfile:
         config.write(configfile, space_around_delimiters=False)
+
 
 def save_config(window):
     config = configparser.ConfigParser()
@@ -1107,6 +1124,7 @@ def save_config(window):
             conf_order[elem.name] = str(index)
 
     write_config_file(config)
+
 
 def load_config(window):
     config = configparser.ConfigParser()
@@ -1170,10 +1188,12 @@ def load_config(window):
             for j in range(len(ordered)):
                 window.order_elements[j] = ordered[j][0]
 
+
 def create_button(value, click_function):
     button = Gtk.Button(value)
     button.connect("clicked", click_function)
     return button
+
 
 def create_spin_button(value, minv, maxv, step, num_digits, change_function):
     spin = Gtk.SpinButton(adjustment=Gtk.Adjustment(value, minv, maxv, step, 10, 0), digits=num_digits)
@@ -1181,21 +1201,25 @@ def create_spin_button(value, minv, maxv, step, num_digits, change_function):
     spin.connect("value-changed", change_function)
     return spin
 
+
 def create_entry(editable, text):
     entry = Gtk.Entry()
     entry.set_editable(editable)
     entry.set_text(text)
     return entry
 
+
 def create_hbox(border):
     box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL)
     box.set_border_width(border)
     return box
 
+
 def create_vbox(border):
     box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
     box.set_border_width(border)
     return box
+
 
 def create_header_box(text):
     box_header = create_vbox(BOX_BORDER)
@@ -1203,14 +1227,17 @@ def create_header_box(text):
     box_header.pack_start(Gtk.Separator(orientation=Gtk.Orientation.HORIZONTAL), False, False, 0)
     return box_header
 
+
 def restart_nemo():
     # A better way of making nemo reload the metadata is needed
     log("Restarting nemo")
     subprocess.Popen('sh -c "nemo --quit && sleep 1 && nemo"', shell=True, stderr=subprocess.DEVNULL)
 
+
 def log(text):
     global log_data
     log_data += text + "\n"
+
 
 def reload_elements(window):
     if window.manage_system_elements:
@@ -1269,6 +1296,7 @@ class ProfileHolder:
     def update_list_elements(self, elements, order):
         pass
 
+
 def load_profile(profile_number):
     profile_holder = ProfileHolder()
     print("Applying profile", profile_number)
@@ -1277,6 +1305,7 @@ def load_profile(profile_number):
     save_config(profile_holder)
     print("Applying profile", profile_number, "done")
 
+
 def set_icon_scale(value):
     profile_holder = ProfileHolder()
     print("Applying scale", value)
@@ -1284,6 +1313,7 @@ def set_icon_scale(value):
     profile_holder.organizations[profile_holder.active_profile].apply()
     save_config(profile_holder)
     print("Applying scale", value, "done")
+
 
 def clamp(n, smallest, largest):
     return max(smallest, min(n, largest))
@@ -1294,6 +1324,7 @@ class UnusedWindow(Gtk.Window):
     def __init__(self):
         Gtk.Window.__init__(self, title="Unused")
 
+
 def get_monitor_dimensions():
     winx = UnusedWindow()
     screen = winx.get_screen()
@@ -1301,8 +1332,10 @@ def get_monitor_dimensions():
     dimensions = screen.get_monitor_geometry(monitor)
     return dimensions.width, dimensions.height
 
+
 def terminate():
     sys.exit(0)
+
 
 if __name__ == "__main__":
 
@@ -1329,7 +1362,7 @@ if __name__ == "__main__":
             print("Profile must be a number")
             terminate()
         if profile < 0 or profile >= NUM_PROFILES:
-            print("Profile must be in [ 0 ,", NUM_PROFILES - 1,"]")
+            print("Profile must be in [ 0 ,", NUM_PROFILES - 1, "]")
             terminate()
         load_profile(profile)
         terminate()
