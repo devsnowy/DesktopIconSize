@@ -1083,15 +1083,15 @@ def set_file_metadata_system(cfg, name, scale, x, y, just_scale):
         cfg[name][STRING_POSITION_SYSTEM] = str(x) + "," + str(y)
 
 
-def refresh_items(basePath, elements):
+def refresh_items(basepath, elements):
     for e in elements:
         if e.is_user:
             try:
-                fileName = e.name
-                subprocess.check_output("mv '" + basePath + fileName + "' '" + basePath + fileName + "_dis000'" , shell=True, stderr=subprocess.DEVNULL)
-                subprocess.check_output("mv '" + basePath + fileName + "_dis000' '" + basePath + fileName + "'", shell=True, stderr=subprocess.DEVNULL)
-            except subprocess.CalledProcessError as e:
-                pass
+                filename = e.name
+                subprocess.check_output("mv '" + basepath + filename + "' '" + basepath + filename + "_dis000'", shell=True, stderr=subprocess.DEVNULL)
+                subprocess.check_output("mv '" + basepath + filename + "_dis000' '" + basepath + filename + "'", shell=True, stderr=subprocess.DEVNULL)
+            except Exception as e:
+                log("Error refreshing " + filename + " : " + str(e))
 
 
 def write_config_file(config):
