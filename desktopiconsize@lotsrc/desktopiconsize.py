@@ -24,10 +24,22 @@ Desktop Icon Size
 v1.0
 Controls desktop icons size and position for Cinnamon
 
+This works by setting the metadata for each element in the desktop.
+It is the same method used when resizing with the mouse in the native Resize icon option.
+
+The refresh of the elements (making sure Cinnamon detects the changes) is made
+by renaming the files with a suffix and the renaming again with the original name.
+
+The exception are system icons, in that case the file browser process is killed and restarted.
+Pressing F5 in the desktop does not work, it causes the metadata file to be rewritten with
+the data in memory.
+
+The order of the elements is stored in a configuration file, it can be deleted in case of problems.
+
 Tested with :
 
-- Linux Mint 18 64 bit  Cinnamon 3.0.7  nemo 3.0.6  Python 3.5.2
-- Linux Mint 17 32 bit  Cinnamon 2.2    nemo 2.2    Python 3.4.0
+- Linux Mint 18.0 64 bit  Cinnamon 3.0.7  nemo 3.0.6  Python 3.5.2
+- Linux Mint 17.0 32 bit  Cinnamon 2.2    nemo 2.2    Python 3.4.0
 """
 
 import os, subprocess, sys, configparser, math
