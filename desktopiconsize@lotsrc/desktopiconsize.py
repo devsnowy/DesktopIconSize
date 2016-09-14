@@ -771,9 +771,7 @@ class DISWindow(Gtk.Window):
 
     def create_list_elements(self):
         self.box_list_elements = create_vbox(BOX_BORDER)
-
         self.label_list_elements = Gtk.Label("Order", xalign=0)
-        #self.box_list_elements.pack_start(self.label_list_elements, False, False, 3)
 
         # Buttons
 
@@ -792,7 +790,6 @@ class DISWindow(Gtk.Window):
         self.liststore_elements = Gtk.ListStore(str)
         self.current_filter_language = None
 
-        # creating the treeview, making it use the filter as a model, and adding the columns
         self.treeview_elements = Gtk.TreeView(self.liststore_elements)
         self.treeview_elements_selection = self.treeview_elements.get_selection()
 
@@ -937,8 +934,6 @@ class DISWindow(Gtk.Window):
                 self.organizations[i].update_settings(self)
             reload_elements(self)
             save_config(self)
-
-    # There can be new or missing elements
 
     def on_button_apply_clicked(self, event):
         self.organizations[self.active_profile].apply()
