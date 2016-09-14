@@ -1054,18 +1054,17 @@ def get_desktop_system_elements(cad):
     return res
 
 
-def set_file_metadata(basePath, fileName, scale, x, y, just_scale):
+def set_file_metadata(base_path, file_name, scale, x, y, just_scale):
     try:
-        subprocess.check_output("gvfs-set-attribute '" + basePath + fileName + "' metadata::icon-scale " + str(scale), shell=True, stderr=subprocess.DEVNULL)
+        subprocess.check_output("gvfs-set-attribute '" + base_path + file_name + "' metadata::" + STRING_SCALE_SYSTEM + " " + str(scale), shell=True, stderr=subprocess.DEVNULL)
         if not just_scale:
-            subprocess.check_output("gvfs-set-attribute '" + basePath + fileName + "' metadata::nemo-icon-position " + str(x) + ',' + str(y), shell=True, stderr=subprocess.DEVNULL)
-    except subprocess.CalledProcessError as e:
-        pass
+            subprocess.check_output("gvfs-set-attribute '" + base_path + file_name + "' metadata::" + STRING_POSITION_SYSTEM + " " + str(x) + ',' + str(y), shell=True, stderr=subprocess.DEVNULL)
+    except Exception as e:
+        log("Error setting metadata in " + file_name + " : " + str(e))
 
 
 def open_file_metadata_system(system_metadata_path):
     cfg = configparser.ConfigParser()
-    #log("Reading system metadata file " + system_metadata_path)
     cfg.read(system_metadata_path)
     return cfg
 
