@@ -1,14 +1,14 @@
 # Desktop Icon Size
 
-Cinnamon applet to change desktop icons size and position
+Cinnamon applet to change size and position of desktop icons
+
+![](https://raw.githubusercontent.com/wiki/lotsrc/DesktopIconSize/screenshot_main.png)
 
 ## Features
 
 * Precise icon size selection
 * 5 different layouts
 * Multiple profiles
- 
-![](https://raw.githubusercontent.com/wiki/lotsrc/DesktopIconSize/screenshot_main.png)
 
 ## Requeriments
 
