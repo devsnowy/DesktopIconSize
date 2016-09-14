@@ -523,14 +523,10 @@ class DISWindow(Gtk.Window):
         self.textview_log = Gtk.TextView()
         self.textview_log.set_editable(False)
         self.textview_log.set_border_width(LOG_BORDER)
-        #self.textview_log.set_hexpand(True)
-        #self.textview_log.set_vexpand(True)
         self.textview_log_buffer = self.textview_log.get_buffer()
 
         self.textview_log_scroll = Gtk.ScrolledWindow()
         self.textview_log_scroll.set_shadow_type(Gtk.ShadowType.ETCHED_IN)
-        #self.textview_log_scroll.set_hexpand(True)
-        #self.textview_log_scroll.set_vexpand(True)
         self.textview_log_scroll.add(self.textview_log)
 
         self.box_log.pack_start(self.label_log, False, False, 0)
@@ -538,7 +534,7 @@ class DISWindow(Gtk.Window):
 
         self.box_page_settings.pack_start(self.box_log, True, True, 0)
 
-    def log(self, text, update_ui = True):
+    def log(self, text, update_ui=True):
         global log_data
         log_data += text + "\n"
         if update_ui:
@@ -679,8 +675,8 @@ class DISWindow(Gtk.Window):
         self.label_bar_posx = Gtk.Label("Left (pixels)", xalign=0)
         self.label_bar_posy = Gtk.Label("Top (pixels)", xalign=0)
 
-        self.spin_bar_posx = create_spin_button(BAR_POSX_DEFAULT, 0, 1000, 10, 0, self.on_spin_bar_posx_changed)
-        self.spin_bar_posy = create_spin_button(BAR_POSY_DEFAULT, 0, 1000, 10, 0, self.on_spin_bar_posy_changed)
+        self.spin_bar_posx = create_spin_button(BAR_POSX_DEFAULT, 0, screen_width, 10, 0, self.on_spin_bar_posx_changed)
+        self.spin_bar_posy = create_spin_button(BAR_POSY_DEFAULT, 0, screen_height, 10, 0, self.on_spin_bar_posy_changed)
 
         self.box_bar_left.pack_start(self.label_bar_posy, False, False, 0)
         self.box_bar_left.pack_start(self.spin_bar_posy, False, False, PACK_SPIN)
