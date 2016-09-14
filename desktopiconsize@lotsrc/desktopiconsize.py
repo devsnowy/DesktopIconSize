@@ -1153,25 +1153,25 @@ def load_config(window):
         cprofile = "Profile" + str(i+1)
         if cprofile in config:
             window.organizations[i].layout = int(config[cprofile].get("layout", 0))
-            window.organizations[i].scale  = float(config[cprofile].get("scale", 1))
-            window.organizations[i].margin_top    = int(config[cprofile].get("margin-top", MARGIN_TOP_DEFAULT))
+            window.organizations[i].scale = float(config[cprofile].get("scale", 1))
+            window.organizations[i].margin_top = int(config[cprofile].get("margin-top", MARGIN_TOP_DEFAULT))
             window.organizations[i].margin_bottom = int(config[cprofile].get("margin-bottom", MARGIN_BOTTOM_DEFAULT))
-            window.organizations[i].margin_left   = int(config[cprofile].get("margin-left", MARGIN_LEFT_DEFAULT))
-            window.organizations[i].margin_right  = int(config[cprofile].get("margin-right", MARGIN_RIGHT_DEFAULT))
-            window.organizations[i].grid_width    = int(config[cprofile].get("grid-width", MARGIN_TOP_DEFAULT))
-            window.organizations[i].grid_height   = int(config[cprofile].get("grid-height", MARGIN_TOP_DEFAULT))
+            window.organizations[i].margin_left = int(config[cprofile].get("margin-left", MARGIN_LEFT_DEFAULT))
+            window.organizations[i].margin_right = int(config[cprofile].get("margin-right", MARGIN_RIGHT_DEFAULT))
+            window.organizations[i].grid_width = int(config[cprofile].get("grid-width", MARGIN_TOP_DEFAULT))
+            window.organizations[i].grid_height = int(config[cprofile].get("grid-height", MARGIN_TOP_DEFAULT))
 
-            window.organizations[i].bar_type  = int(config[cprofile].get("bar_type", 0))
+            window.organizations[i].bar_type = int(config[cprofile].get("bar_type", 0))
             window.organizations[i].bar_items = int(config[cprofile].get("bar_items", BAR_ITEMS_DEFAULT))
-            window.organizations[i].bar_posx  = int(config[cprofile].get("bar_posx", BAR_POSX_DEFAULT))
-            window.organizations[i].bar_posy  = int(config[cprofile].get("bar_posy", BAR_POSY_DEFAULT))
+            window.organizations[i].bar_posx = int(config[cprofile].get("bar_posx", BAR_POSX_DEFAULT))
+            window.organizations[i].bar_posy = int(config[cprofile].get("bar_posy", BAR_POSY_DEFAULT))
 
-            window.organizations[i].round_posx    = int(config[cprofile].get("round_posx", 0))
-            window.organizations[i].round_posy    = int(config[cprofile].get("round_posy", 0))
+            window.organizations[i].round_posx = int(config[cprofile].get("round_posx", 0))
+            window.organizations[i].round_posy = int(config[cprofile].get("round_posy", 0))
             window.organizations[i].round_radiusx = int(config[cprofile].get("round_radiusx", 0))
             window.organizations[i].round_radisuy = int(config[cprofile].get("round_radiusy", 0))
-            window.organizations[i].round_start   = float(config[cprofile].get("round_start", ROUND_START_DEFAULT))
-            window.organizations[i].round_step    = float(config[cprofile].get("round_step", ROUND_STEP_DEFAULT))
+            window.organizations[i].round_start = float(config[cprofile].get("round_start", ROUND_START_DEFAULT))
+            window.organizations[i].round_step = float(config[cprofile].get("round_step", ROUND_STEP_DEFAULT))
 
         conf_order = "Order" + str(i+1)
         if conf_order in config:
@@ -1183,7 +1183,7 @@ def load_config(window):
             for index in range(len(window.elements)):
                 elem = window.elements[index]
                 order_in_config_file = int(config[conf_order].get(elem.name, -1))
-                new_order.append( [index, order_in_config_file] )
+                new_order.append([index, order_in_config_file])
                 maximum = max(order_in_config_file, maximum)
 
             # Send elements not in config file (new) at the end
