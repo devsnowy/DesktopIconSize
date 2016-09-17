@@ -71,6 +71,7 @@ MARGIN_RIGHT_DEFAULT = 150
 
 GRID_WIDTH_DEFAULT = 150
 GRID_HEIGHT_DEFAULT = 150
+GRID_STEP = 1
 
 BAR_ITEMS_DEFAULT = 5
 BAR_POSX_DEFAULT = 50
@@ -623,8 +624,8 @@ class DISWindow(Gtk.Window):
         self.label_grid_width = Gtk.Label("Width", xalign=0)
         self.label_grid_height = Gtk.Label("Height", xalign=0)
 
-        self.spin_grid_width = create_spin_button(GRID_WIDTH_DEFAULT, 0, screen_width, 1, 0, self.on_grid_changed)
-        self.spin_grid_height = create_spin_button(GRID_HEIGHT_DEFAULT, 0, screen_height, 1, 0, self.on_grid_changed)
+        self.spin_grid_width = create_spin_button(GRID_WIDTH_DEFAULT, 0, screen_width, GRID_STEP, 0, self.on_grid_changed)
+        self.spin_grid_height = create_spin_button(GRID_HEIGHT_DEFAULT, 0, screen_height, GRID_STEP, 0, self.on_grid_changed)
 
         self.box_grid_left.add(self.label_grid_width)
         self.box_grid_left.pack_start(self.spin_grid_width, False, False, PACK_SPIN)
