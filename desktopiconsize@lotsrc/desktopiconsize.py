@@ -1190,7 +1190,7 @@ def create_button(value, click_function):
 
 
 def create_spin_button(value, minv, maxv, step, num_digits, change_function):
-    spin = Gtk.SpinButton(adjustment=Gtk.Adjustment(value, minv, maxv, step, 1.0, 0), digits=num_digits)
+    spin = Gtk.SpinButton(adjustment=Gtk.Adjustment(value, minv, maxv, step, 10*step, 0), digits=num_digits)
     spin.set_value(value)
     spin.connect("value-changed", change_function)
     return spin
