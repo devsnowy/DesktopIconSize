@@ -831,7 +831,10 @@ class DISWindow(Gtk.Window):
     def on_combo_active_profile_changed(self, combo):
         if self.update_organization:
             self.active_profile = self.combo_active_profile.get_active()
+            original_value = self.apply_on_change
+            self.apply_on_change = False
             self.set_organization(self.organizations[self.active_profile])
+            self.apply_on_change = original_value
             self.apply_organization()
             save_config(self)
 
