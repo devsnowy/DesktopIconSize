@@ -77,6 +77,7 @@ GRID_STEP = 1
 BAR_ITEMS_DEFAULT = 5
 BAR_POSX_DEFAULT = 50
 BAR_POSY_DEFAULT = 50
+BAR_STEP = 10
 
 ROUND_START_DEFAULT = 270
 ROUND_STEP_DEFAULT = 15
@@ -669,8 +670,8 @@ class DISWindow(Gtk.Window):
         self.label_bar_posx = Gtk.Label("Left (pixels)", xalign=0)
         self.label_bar_posy = Gtk.Label("Top (pixels)", xalign=0)
 
-        self.spin_bar_posx = create_spin_button(BAR_POSX_DEFAULT, 0, screen_width, 10, 0, self.on_spin_bar_posx_changed)
-        self.spin_bar_posy = create_spin_button(BAR_POSY_DEFAULT, 0, screen_height, 10, 0, self.on_spin_bar_posy_changed)
+        self.spin_bar_posx = create_spin_button(BAR_POSX_DEFAULT, 0, screen_width, BAR_STEP, 0, self.on_spin_bar_posx_changed)
+        self.spin_bar_posy = create_spin_button(BAR_POSY_DEFAULT, 0, screen_height, BAR_STEP, 0, self.on_spin_bar_posy_changed)
 
         self.box_bar_left.pack_start(self.label_bar_posy, False, False, 0)
         self.box_bar_left.pack_start(self.spin_bar_posy, False, False, PACK_SPIN)
