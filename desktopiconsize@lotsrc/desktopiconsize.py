@@ -21,8 +21,6 @@
 
 """
   Desktop Icon Size
-  v1.0
-  Controls desktop icons size and position for Cinnamon
 
   This works by setting the metadata in the gvfs filesystem for each element in the desktop.
   It is the same method used when resizing with the mouse in the native Resize icon option.
