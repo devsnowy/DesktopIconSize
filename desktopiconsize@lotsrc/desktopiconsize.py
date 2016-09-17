@@ -45,10 +45,13 @@
 import os, subprocess, sys, configparser, math
 import gi
 gi.require_version('Gtk', '3.0')
-from gi.repository import Gtk
+from gi.repository import Gtk, GdkPixbuf
 
 WINDOW_TITLE = "Desktop Icon Size"
 CONFIGURATION_FILE = ".desktopiconsize.conf"
+PROGRAM_VERSION = "1.0"
+PROGRAM_WEBSITE = "https://github.com/lotsrc/DesktopIconSize"
+PROGRAM_COPYRIGHT = "Copyright (C) 2016  Gaston Brito"
 
 # If changed these must end with /
 
@@ -321,12 +324,31 @@ class Organization:
             skip += 1
         return skip
 
+
 class ListBoxRowWithData(Gtk.ListBoxRow):
 
     def __init__(self, data):
         super(Gtk.ListBoxRow, self).__init__()
         self.data = data
         self.add(Gtk.Label(data))
+
+
+class AboutInfoDialog(Gtk.AboutDialog):
+
+    def __init__(self, parent):
+        Gtk.Dialog.__init__(self, "About", parent, 0)
+        self.set_program_name(WINDOW_TITLE)
+        self.set_version(PROGRAM_VERSION)
+        self.set_website(PROGRAM_WEBSITE)
+        self.set_website_label(PROGRAM_WEBSITE)
+        self.set_copyright(PROGRAM_COPYRIGHT)
+        self.set_license_type(Gtk.License.GPL_2_0)
+        try:
+            logo = GdkPixbuf.Pixbuf.new_from_file_at_size(get_program_directory() + "icon.svg", 64, -1)
+            self.set_logo(logo)
+        except Exception as e:
+            parent.log("Error AboutDialog : " + str(e))
+        self.show()
 
 
 class DISWindow(Gtk.Window):
@@ -376,8 +398,7 @@ class DISWindow(Gtk.Window):
         self.log("Init complete")
 
     def load_icon(self):
-        dir_file = format_directory_path(os.path.dirname(os.path.realpath(__file__)))
-        full_icon_path = dir_file + "icon.png"
+        full_icon_path = get_program_directory() + "icon.png"
         try:
             self.set_icon_from_file(full_icon_path)
         except:
@@ -431,7 +452,6 @@ class DISWindow(Gtk.Window):
         self.create_settings()
         self.create_ui_info()
         self.create_ui_log()
-        self.create_version()
 
         self.box_icon_left  = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=2)
         self.box_icon_right = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=2)
@@ -542,11 +562,6 @@ class DISWindow(Gtk.Window):
         log_data += text + "\n"
         if update_ui:
             self.textview_log_buffer.set_text(log_data)
-
-    def create_version(self):
-        self.box_version = Gtk.Box()
-        self.label_version = Gtk.Label("v 1.0")
-        self.box_page_settings.pack_end(self.label_version, False, False, 10)
 
     def create_combo_layouts(self):
         self.box_layouts = create_vbox(BOX_BORDER)
@@ -803,9 +818,11 @@ class DISWindow(Gtk.Window):
     def create_buttons_bottom(self):
         self.box_buttons_bottom = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=5)
 
+        self.button_about = create_button("About", self.on_button_about_clicked)
         self.button_apply = create_button("Apply", self.on_button_apply_clicked)
         self.button_close = create_button("Close", self.on_button_close_clicked)
 
+        self.box_buttons_bottom.pack_start(self.button_about, False, False, 0)
         self.box_buttons_bottom.pack_end(self.button_close, False, False, 0)
         self.box_buttons_bottom.pack_end(self.button_apply, False, False, 0)
 
@@ -936,6 +953,11 @@ class DISWindow(Gtk.Window):
             restart_nemo()
             self.log("Nemo restarted")
 
+    def on_button_about_clicked(self, event):
+        dialog = AboutInfoDialog(self)
+        dialog.run()
+        dialog.destroy()
+
     def on_button_close_clicked(self, event):
         Gtk.main_quit()
 
@@ -944,6 +966,10 @@ class DISWindow(Gtk.Window):
         for elem in order:
             if self.manage_system_elements or elements[elem].is_user:
                 self.liststore_elements.append([elements[elem].display_name()])
+
+
+def get_program_directory():
+    return format_directory_path(os.path.dirname(os.path.realpath(__file__)))
 
 
 def format_directory_path(path):
