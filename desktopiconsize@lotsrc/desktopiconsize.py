@@ -416,7 +416,6 @@ class DISWindow(Gtk.Window):
             self.resize(size[0], size[1] - RESIZE_VERTICAL_DELTA)
 
     def set_organization(self, org):
-        self.apply_on_change = False
         self.combo_layout.set_active(org.layout)
         self.scale.set_value(org.scale)
         self.margin_top.set_value(org.margin_top)
@@ -437,8 +436,6 @@ class DISWindow(Gtk.Window):
         self.spin_round_radiusy.set_value(org.round_radiusy)
         self.spin_round_angle_start.set_value(org.round_start)
         self.spin_round_angle_step.set_value(org.round_step)
-
-        self.apply_on_change = True
 
     def create_ui(self, screen_width, screen_height):
         self.set_border_width(MAIN_BORDER)
