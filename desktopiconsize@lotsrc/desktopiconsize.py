@@ -20,26 +20,26 @@
 """
 
 """
-Desktop Icon Size
-v1.0
-Controls desktop icons size and position for Cinnamon
+  Desktop Icon Size
+  v1.0
+  Controls desktop icons size and position for Cinnamon
 
-This works by setting the metadata for each element in the desktop.
-It is the same method used when resizing with the mouse in the native Resize icon option.
+  This works by setting the metadata in the gvfs filesystem for each element in the desktop.
+  It is the same method used when resizing with the mouse in the native Resize icon option.
 
-The refresh of the elements (making sure Cinnamon detects the changes) is made
-by renaming the files with a suffix and the renaming again with the original name.
+  The refresh of the elements (making sure Cinnamon detects the changes) is made
+  by renaming the files with a suffix and then renaming again with the original name.
 
-The exception are system icons, in that case the file browser process is killed and restarted.
-Pressing F5 in the desktop does not work, it causes the metadata file to be rewritten with
-the data in memory.
+  The exception are system icons, in that case the file browser process is killed and restarted.
+  Pressing F5 in the desktop does not work, it causes the metadata file to be rewritten with
+  the data in memory.
 
-The order of the elements is stored in a configuration file, it can be deleted in case of problems.
+  The order of the elements is stored in a configuration file, it can be deleted in case of problems.
 
-Tested with :
+  Tested with :
 
-- Linux Mint 18.0 64 bit  Cinnamon 3.0.7  nemo 3.0.6  Python 3.5.2
-- Linux Mint 17.0 32 bit  Cinnamon 2.2    nemo 2.2    Python 3.4.0
+  - Linux Mint 18.0 64 bit  Cinnamon 3.0.7  nemo 3.0.6  Python 3.5.2
+  - Linux Mint 17.0 32 bit  Cinnamon 2.2    nemo 2.2    Python 3.4.0
 """
 
 import os, subprocess, sys, configparser, math
@@ -137,10 +137,10 @@ class DesktopElement:
         return -1
 
 """
-The next classes generate screen points based on certain parameters
+  These classes generate screen points based on certain parameters
 
-LinearPositionGenerator
-RoundPositionGenerator
+  LinearPositionGenerator
+  RoundPositionGenerator
 """
 
 
@@ -199,7 +199,7 @@ class RoundPositionGenerator:
 class Organization:
     """Parameters used to generate the icon layout"""
 
-    def __init__(self, screen_width, screen_height, system_metadada_path, desktop_path, elements, order, manage_system_icons):
+    def __init__(self, screen_width, screen_height, system_metadata_path, desktop_path, elements, order, manage_system_icons):
         self.layout = 0
         self.scale = 1.0
         self.margin_top = MARGIN_TOP_DEFAULT
@@ -212,21 +212,21 @@ class Organization:
         self.elements = elements
         self.order = order
         self.desktop_path = desktop_path
-        self.system_metadada_path = system_metadada_path
+        self.system_metadata_path = system_metadata_path
         self.manage_system_icons = manage_system_icons
         # Bar
-        self.bar_type  = 0
+        self.bar_type = 0
         self.bar_items = BAR_ITEMS_DEFAULT
-        self.bar_posx  = BAR_POSX_DEFAULT
-        self.bar_posy  = BAR_POSY_DEFAULT
+        self.bar_posx = BAR_POSX_DEFAULT
+        self.bar_posy = BAR_POSY_DEFAULT
         # Round
-        self.round_posx    = int(screen_width / 2)
-        self.round_posy    = int(screen_height / 2)
+        self.round_posx = int(screen_width / 2)
+        self.round_posy = int(screen_height / 2)
         mindim = min(screen_width, screen_height)
         self.round_radiusx = int(mindim / 3)
         self.round_radiusy = int(mindim / 3)
-        self.round_start   = ROUND_START_DEFAULT
-        self.round_step    = ROUND_STEP_DEFAULT
+        self.round_start = ROUND_START_DEFAULT
+        self.round_step = ROUND_STEP_DEFAULT
 
     def update_layout(self, window):
         self.layout = window.combo_layout.get_active()
@@ -249,29 +249,29 @@ class Organization:
         self.order = window.order_elements
 
     def update_bar(self, window):
-        self.bar_type  = window.combo_bar.get_active()
+        self.bar_type = window.combo_bar.get_active()
         self.bar_items = window.spin_bar_items.get_value_as_int()
-        self.bar_posx  = window.spin_bar_posx.get_value_as_int()
-        self.bar_posy  = window.spin_bar_posy.get_value_as_int()
+        self.bar_posx = window.spin_bar_posx.get_value_as_int()
+        self.bar_posy = window.spin_bar_posy.get_value_as_int()
 
     def update_round(self, window):
-        self.round_posx    = window.spin_round_posx.get_value_as_int()
-        self.round_posy    = window.spin_round_posy.get_value_as_int()
+        self.round_posx = window.spin_round_posx.get_value_as_int()
+        self.round_posy = window.spin_round_posy.get_value_as_int()
         self.round_radiusx = window.spin_round_radiusx.get_value_as_int()
         self.round_radiusy = window.spin_round_radiusy.get_value_as_int()
-        self.round_start   = window.spin_round_angle_start.get_value()
-        self.round_step    = window.spin_round_angle_step.get_value()
+        self.round_start = window.spin_round_angle_start.get_value()
+        self.round_step = window.spin_round_angle_step.get_value()
 
     def update_settings(self, window):
         self.manage_system_icons = window.manage_system_elements
 
     def apply(self, just_scale=False):
         if self.manage_system_icons:
-            config = open_file_metadata_system(self.system_metadada_path)
+            config = open_file_metadata_system(self.system_metadata_path)
         else:
             config = None
 
-        log("Organization (" + str(self.layout) +"," + str(self.scale) + "," + str(self.grid_width) + "," + str(self.grid_height) + "," + str(self.margin_top) + "," + str(self.margin_bottom) + "," + str(self.margin_left) + "," + str(self.margin_right)+ ")")
+        log("Organization (" + str(self.layout) + "," + str(self.scale) + "," + str(self.grid_width) + "," + str(self.grid_height) + "," + str(self.margin_top) + "," + str(self.margin_bottom) + "," + str(self.margin_left) + "," + str(self.margin_right)+ ")")
 
         if self.layout == 0:
             gen = LinearPositionGenerator(True, self.margin_left, self.margin_top, self.grid_width, self.grid_height, self.margin_left, self.screen_resolution[0] - self.margin_right, False, 0)
@@ -295,7 +295,7 @@ class Organization:
 
         refresh_items(self.desktop_path, self.elements)
         if config is not None:
-            close_file_metadata_system(config, self.system_metadada_path)
+            close_file_metadata_system(config, self.system_metadata_path)
 
     def organize_bar(self, cfg, just_scale):
         """This is always called before any other organization"""
