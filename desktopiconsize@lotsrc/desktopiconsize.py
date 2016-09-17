@@ -68,6 +68,7 @@ MARGIN_TOP_DEFAULT = 100
 MARGIN_BOTTOM_DEFAULT = 200
 MARGIN_LEFT_DEFAULT = 120
 MARGIN_RIGHT_DEFAULT = 150
+MARGIN_STEP = 10
 
 GRID_WIDTH_DEFAULT = 150
 GRID_HEIGHT_DEFAULT = 150
@@ -591,10 +592,10 @@ class DISWindow(Gtk.Window):
         self.label_margin_left = Gtk.Label("Left", xalign=0)
         self.label_margin_right = Gtk.Label("Right", xalign=0)
 
-        self.margin_top    = create_spin_button(MARGIN_TOP_DEFAULT, 0, screen_height,10,0,self.on_margin_changed)
-        self.margin_bottom = create_spin_button(MARGIN_BOTTOM_DEFAULT, 0, screen_height, 10, 0, self.on_margin_changed)
-        self.margin_left   = create_spin_button(MARGIN_LEFT_DEFAULT, 0, screen_width, 10, 0, self.on_margin_changed)
-        self.margin_right  = create_spin_button(MARGIN_RIGHT_DEFAULT, 0, screen_width, 10, 0, self.on_margin_changed)
+        self.margin_top = create_spin_button(MARGIN_TOP_DEFAULT, 0, screen_height, MARGIN_STEP, 0, self.on_margin_changed)
+        self.margin_bottom = create_spin_button(MARGIN_BOTTOM_DEFAULT, 0, screen_height, MARGIN_STEP, 0, self.on_margin_changed)
+        self.margin_left = create_spin_button(MARGIN_LEFT_DEFAULT, 0, screen_width, MARGIN_STEP, 0, self.on_margin_changed)
+        self.margin_right = create_spin_button(MARGIN_RIGHT_DEFAULT, 0, screen_width, MARGIN_STEP, 0, self.on_margin_changed)
 
         self.box_margin_left.pack_start(self.label_margin_top, False, False, 0)
         self.box_margin_left.pack_start(self.margin_top, False, False, PACK_SPIN)
