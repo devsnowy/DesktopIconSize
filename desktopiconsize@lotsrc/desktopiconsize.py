@@ -1323,6 +1323,8 @@ def load_profile(profile_number):
     print("Applying profile", profile_number)
     profile_holder.active_profile = profile_number
     profile_holder.organizations[profile_number].apply()
+    if profile_holder.manage_system_elements:
+        restart_nemo()
     save_config(profile_holder)
     print("Applying profile", profile_number, "done")
 
@@ -1332,6 +1334,8 @@ def set_icon_scale(value):
     print("Applying scale", value)
     profile_holder.organizations[profile_holder.active_profile].scale = value
     profile_holder.organizations[profile_holder.active_profile].apply()
+    if profile_holder.manage_system_elements:
+        restart_nemo()
     save_config(profile_holder)
     print("Applying scale", value, "done")
 
