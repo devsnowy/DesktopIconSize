@@ -569,9 +569,7 @@ class DISWindow(Gtk.Window):
         self.label_scale = Gtk.Label("Scale", xalign=0)
         self.box_scale.pack_start(self.label_scale, False, False, 0)
 
-        self.scale = Gtk.SpinButton(adjustment=Gtk.Adjustment(1, 0.5, 8, 0.1, 10, 0), digits=2)
-        self.scale.set_value(1)
-        self.scale.connect("value-changed", self.on_scale_changed)
+        self.scale = create_spin_button(1, 0.5, 8, 0.1, 2, self.on_scale_changed)
         self.box_scale.add(self.scale)
 
     def create_ui_margins(self, screen_width, screen_height):
@@ -625,14 +623,8 @@ class DISWindow(Gtk.Window):
         self.label_grid_width = Gtk.Label("Width", xalign=0)
         self.label_grid_height = Gtk.Label("Height", xalign=0)
 
-        self.spin_grid_width = Gtk.SpinButton(adjustment=Gtk.Adjustment(GRID_WIDTH_DEFAULT, 0, screen_width, 1, 10, 0))
-        self.spin_grid_height = Gtk.SpinButton(adjustment=Gtk.Adjustment(GRID_HEIGHT_DEFAULT, 0, screen_height, 1, 10, 0))
-
-        self.spin_grid_width.set_value(GRID_WIDTH_DEFAULT)
-        self.spin_grid_height.set_value(GRID_HEIGHT_DEFAULT)
-
-        self.spin_grid_width.connect("value-changed", self.on_grid_changed)
-        self.spin_grid_height.connect("value-changed", self.on_grid_changed)
+        self.spin_grid_width = create_spin_button(GRID_WIDTH_DEFAULT, 0, screen_width, 1, 0, self.on_grid_changed)
+        self.spin_grid_height = create_spin_button(GRID_HEIGHT_DEFAULT, 0, screen_height, 1, 0, self.on_grid_changed)
 
         self.box_grid_left.add(self.label_grid_width)
         self.box_grid_left.pack_start(self.spin_grid_width, False, False, PACK_SPIN)
@@ -1198,7 +1190,7 @@ def create_button(value, click_function):
 
 
 def create_spin_button(value, minv, maxv, step, num_digits, change_function):
-    spin = Gtk.SpinButton(adjustment=Gtk.Adjustment(value, minv, maxv, step, 10, 0), digits=num_digits)
+    spin = Gtk.SpinButton(adjustment=Gtk.Adjustment(value, minv, maxv, step, 1.0, 0), digits=num_digits)
     spin.set_value(value)
     spin.connect("value-changed", change_function)
     return spin
