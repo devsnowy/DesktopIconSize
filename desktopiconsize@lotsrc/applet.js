@@ -40,7 +40,7 @@ MyApplet.prototype = {
 
         Applet.IconApplet.prototype._init.call(this, orientation, panel_height, instance_id);
         this._metadata = metadata;
-        this.set_applet_icon_path(this._metadata.path + "/iconpanel.png");
+        this.set_applet_icon_path(this._metadata.path + "/iconpanel.svg");
         this.set_applet_tooltip("Desktop Icon Size");
 
         // Create menu
