@@ -1317,7 +1317,7 @@ def clamp(n, smallest, largest):
 
 
 class UnusedWindow(Gtk.Window):
-    """This window is just used to get the monitor dimennsions"""
+    """This window is just used to get the monitor dimensions"""
     def __init__(self):
         Gtk.Window.__init__(self, title="Unused")
 
