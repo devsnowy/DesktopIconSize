@@ -663,7 +663,7 @@ class DISWindow(Gtk.Window):
         # Spin items
 
         self.label_bar_items = Gtk.Label("# First items", xalign=0)
-        self.spin_bar_items = create_spin_button(BAR_ITEMS_DEFAULT, 1, 1000, 1, 0, self.on_spin_bar_items_changed)
+        self.spin_bar_items = create_spin_button(BAR_ITEMS_DEFAULT, 1, 1000, 1, 0, self.on_bar_changed)
 
         self.box_bar_left.pack_start(self.label_bar_type, False, False, 0)
         self.box_bar_left.pack_start(self.combo_bar, False, False, PACK_SPIN)
@@ -676,8 +676,8 @@ class DISWindow(Gtk.Window):
         self.label_bar_posx = Gtk.Label("Left (pixels)", xalign=0)
         self.label_bar_posy = Gtk.Label("Top (pixels)", xalign=0)
 
-        self.spin_bar_posx = create_spin_button(BAR_POSX_DEFAULT, 0, screen_width, BAR_STEP, 0, self.on_spin_bar_posx_changed)
-        self.spin_bar_posy = create_spin_button(BAR_POSY_DEFAULT, 0, screen_height, BAR_STEP, 0, self.on_spin_bar_posy_changed)
+        self.spin_bar_posx = create_spin_button(BAR_POSX_DEFAULT, 0, screen_width, BAR_STEP, 0, self.on_bar_changed)
+        self.spin_bar_posy = create_spin_button(BAR_POSY_DEFAULT, 0, screen_height, BAR_STEP, 0, self.on_bar_changed)
 
         self.box_bar_left.pack_start(self.label_bar_posy, False, False, 0)
         self.box_bar_left.pack_start(self.spin_bar_posy, False, False, PACK_SPIN)
@@ -898,19 +898,7 @@ class DISWindow(Gtk.Window):
                     self.apply_organization()
                     save_config(self)
 
-    def on_spin_bar_items_changed(self, event):
-        if self.update_organization:
-            self.organizations[self.active_profile].update_bar(self)
-            self.apply_organization(True)
-            save_config(self)
-
-    def on_spin_bar_posx_changed(self, event):
-        if self.update_organization:
-            self.organizations[self.active_profile].update_bar(self)
-            self.apply_organization(True)
-            save_config(self)
-
-    def on_spin_bar_posy_changed(self, event):
+    def on_bar_changed(self, event):
         if self.update_organization:
             self.organizations[self.active_profile].update_bar(self)
             self.apply_organization(True)
