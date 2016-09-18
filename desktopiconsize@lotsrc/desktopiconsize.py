@@ -40,7 +40,7 @@
   * Linux Mint 17.0 32 bit  Cinnamon 2.2    nemo 2.2    Python 3.4.0
 """
 
-import os, subprocess, sys, configparser, math
+import os, subprocess, sys, configparser, math, copy
 import gi
 gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk, GdkPixbuf
@@ -248,10 +248,6 @@ class Organization:
         self.grid_width = window.spin_grid_width.get_value_as_int()
         self.grid_height = window.spin_grid_height.get_value_as_int()
 
-    def update_elements(self, window):
-        self.elements = window.elements
-        self.order = window.order_elements
-
     def update_bar(self, window):
         self.bar_type = window.combo_bar.get_active()
         self.bar_items = window.spin_bar_items.get_value_as_int()
@@ -370,22 +366,22 @@ class DISWindow(Gtk.Window):
         self.system_metadata_path = get_system_metadata_path()
         self.log("Using system metadata path " + self.system_metadata_path, False)
 
-        self.elements = get_desktop_list(self.system_metadata_path)
-        self.order_elements = DesktopElement.order_by_name(self.elements)
         self.load_icon()
         self.create_ui(self.screen_resolution[0], self.screen_resolution[1])
 
         # Default organizations
 
+        elements = get_desktop_list(self.system_metadata_path)
+        order_elements = DesktopElement.order_by_name(elements)
         self.organizations = []
         for i in range(NUM_PROFILES):
-            self.organizations.append(Organization(self.screen_resolution[0], self.screen_resolution[1], self.system_metadata_path, self.desktop_path, self.elements, self.order_elements, False))
+            self.organizations.append(Organization(self.screen_resolution[0], self.screen_resolution[1], self.system_metadata_path, self.desktop_path, copy.deepcopy(elements), list(order_elements), False))
 
         load_config(self)
         self.combo_active_profile.set_active(self.active_profile)
         self.switch_system_icons.set_active(self.manage_system_elements)
         if self.manage_system_elements:
-            self.update_list_elements(self.elements, self.order_elements)
+            self.update_list_elements()
             for i in range(NUM_PROFILES):
                 self.organizations[i].update_settings(self)
         else:
@@ -399,7 +395,7 @@ class DISWindow(Gtk.Window):
         full_icon_path = get_program_directory() + "icon.png"
         try:
             self.set_icon_from_file(full_icon_path)
-        except:
+        except Exception as e:
             log("Error: Could not load window icon " + full_icon_path)
 
     def display_mode(self, adjust_size):
@@ -834,6 +830,7 @@ class DISWindow(Gtk.Window):
             original_value = self.apply_on_change
             self.apply_on_change = False
             self.set_organization(self.organizations[self.active_profile])
+            self.update_list_elements()
             self.apply_on_change = original_value
             self.apply_organization()
             save_config(self)
@@ -876,14 +873,12 @@ class DISWindow(Gtk.Window):
             if len(path) > 0:
                 index = path[0]
                 if index > 0:
-                    tmp = self.order_elements[index - 1]
-                    self.order_elements[index - 1] = self.order_elements[index]
-                    self.order_elements[index] = tmp
-                    self.update_list_elements(self.elements, self.order_elements)
+                    tmp = self.organizations[self.active_profile].order[index - 1]
+                    self.organizations[self.active_profile].order[index - 1] = self.organizations[self.active_profile].order[index]
+                    self.organizations[self.active_profile].order[index] = tmp
 
+                    self.update_list_elements()
                     self.treeview_elements_selection.select_path(index - 1)
-
-                    self.organizations[self.active_profile].update_elements(self)
                     self.apply_organization()
                     save_config(self)
 
@@ -893,15 +888,13 @@ class DISWindow(Gtk.Window):
             path = model.get_path(it).get_indices()
             if len(path) > 0:
                 index = path[0]
-                if index + 1 < len(self.elements):
-                    tmp = self.order_elements[index + 1]
-                    self.order_elements[index + 1] = self.order_elements[index]
-                    self.order_elements[index] = tmp
-                    self.update_list_elements(self.elements, self.order_elements)
+                if index + 1 < len(self.organizations[self.active_profile].elements):
+                    tmp = self.organizations[self.active_profile].order[index + 1]
+                    self.organizations[self.active_profile].order[index + 1] = self.organizations[self.active_profile].order[index]
+                    self.organizations[self.active_profile].order[index] = tmp
 
+                    self.update_list_elements()
                     self.treeview_elements_selection.select_path(index + 1)
-
-                    self.organizations[self.active_profile].update_elements(self)
                     self.apply_organization()
                     save_config(self)
 
@@ -959,7 +952,9 @@ class DISWindow(Gtk.Window):
     def on_button_close_clicked(self, event):
         Gtk.main_quit()
 
-    def update_list_elements(self, elements, order):
+    def update_list_elements(self):
+        elements = self.organizations[self.active_profile].elements
+        order = self.organizations[self.active_profile].order
         self.liststore_elements.clear()
         for elem in order:
             if self.manage_system_elements or elements[elem].is_user:
@@ -1140,8 +1135,8 @@ def save_config(window):
 
         config["Order" + str(i + 1)] = {}
         conf_order = config["Order" + str(i + 1)]
-        for index in range(len(window.order_elements)):
-            elem = window.elements[window.order_elements[index]]
+        for index in range(len(window.organizations[i].order)):
+            elem = window.organizations[i].elements[window.organizations[i].order[index]]
             conf_order[elem.name] = str(index)
 
     write_config_file(config)
@@ -1190,8 +1185,8 @@ def load_config(window):
 
             new_order = []
             maximum = -1
-            for index in range(len(window.elements)):
-                elem = window.elements[index]
+            for index in range(len(window.organizations[i].elements)):
+                elem = window.organizations[i].elements[index]
                 order_in_config_file = int(config[conf_order].get(elem.name, -1))
                 new_order.append([index, order_in_config_file])
                 maximum = max(order_in_config_file, maximum)
@@ -1207,7 +1202,7 @@ def load_config(window):
 
             ordered = sorted(new_order, key=lambda v: v[1])
             for j in range(len(ordered)):
-                window.order_elements[j] = ordered[j][0]
+                window.organizations[i].order[j] = ordered[j][0]
 
 
 def create_button(value, click_function):
@@ -1265,27 +1260,28 @@ def reload_elements(window):
         refreshed_elements = get_desktop_list(window.system_metadata_path)
     else:
         refreshed_elements = get_desktop_list(None)
-    new_order = []
 
-    # Add old elements still on the desktop
+    for p in range(NUM_PROFILES):
+        new_order = []
 
-    for i in range(len(window.order_elements)):
-        pos = DesktopElement.element_index(refreshed_elements, window.elements[window.order_elements[i]])
-        if pos != -1:
-            new_order.append(pos)
+        # Add old elements still on the desktop
 
-    # Add new elements
+        for i in range(len(window.organizations[p].order)):
+            pos = DesktopElement.element_index(refreshed_elements, window.organizations[p].elements[window.organizations[p].order[i]])
+            if pos != -1:
+                new_order.append(pos)
 
-    for j in range(len(refreshed_elements)):
-        pos = DesktopElement.element_index(window.elements, refreshed_elements[j])
-        if pos == -1:
-            new_order.append(j)
+        # Add new elements
 
-    window.elements = refreshed_elements
-    window.order_elements = new_order
-    for i in range(NUM_PROFILES):
-        window.organizations[i].update_elements(window)
-    window.update_list_elements(window.elements, window.order_elements)
+        for j in range(len(refreshed_elements)):
+            pos = DesktopElement.element_index(window.organizations[p].elements, refreshed_elements[j])
+            if pos == -1:
+                new_order.append(j)
+
+        window.organizations[p].elements = copy.deepcopy(refreshed_elements)
+        window.organizations[p].order = list(new_order)
+
+    window.update_list_elements()
 
 
 class ProfileHolder:
@@ -1299,12 +1295,11 @@ class ProfileHolder:
         self.desktop_path = get_desktop_path()
         self.system_metadata_path = get_system_metadata_path()
 
-        self.elements = get_desktop_list(self.system_metadata_path)
-        self.order_elements = DesktopElement.order_by_name(self.elements)
-
+        elements = get_desktop_list(self.system_metadata_path)
+        order_elements = DesktopElement.order_by_name(elements)
         self.organizations = []
         for i in range(NUM_PROFILES):
-            self.organizations.append(Organization(self.screen_resolution[0], self.screen_resolution[1], self.system_metadata_path, self.desktop_path, self.elements, self.order_elements, False))
+            self.organizations.append(Organization(self.screen_resolution[0], self.screen_resolution[1], self.system_metadata_path, self.desktop_path, copy.deepcopy(elements), list(order_elements), False))
 
         load_config(self)
         if self.manage_system_elements:
@@ -1314,7 +1309,7 @@ class ProfileHolder:
         else:
             reload_elements(self)
 
-    def update_list_elements(self, elements, order):
+    def update_list_elements(self):
         pass
 
 
@@ -1369,7 +1364,7 @@ if __name__ == "__main__":
     if len(sys.argv) > 2 and sys.argv[1] == "-s":
         try:
             icon_scale = float(sys.argv[2])
-        except:
+        except Exception as e:
             print("Scale must be a float number")
             terminate()
         if icon_scale < 0.5 or icon_scale > 8:
@@ -1383,7 +1378,7 @@ if __name__ == "__main__":
     if len(sys.argv) > 2 and sys.argv[1] == "-p":
         try:
             profile = int(sys.argv[2])
-        except:
+        except Exception as e:
             print("Profile must be a number")
             terminate()
         if profile < 0 or profile >= NUM_PROFILES:
