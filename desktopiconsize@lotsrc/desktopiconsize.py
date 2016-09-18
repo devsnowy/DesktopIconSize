@@ -83,7 +83,8 @@ BAR_STEP = 10
 
 ROUND_START_DEFAULT = 270
 ROUND_STEP_DEFAULT = 15
-ROUND_ANGLE_DELTA = 0.5
+ROUND_START_STEP = 5.0
+ROUND_STEP_STEP = 0.5
 
 MAIN_BORDER = 5
 BOX_BORDER = 5
@@ -736,8 +737,8 @@ class DISWindow(Gtk.Window):
         self.label_round_angle_start = Gtk.Label("Angle start", xalign=0)
         self.label_round_angle_step = Gtk.Label("Angle step", xalign=0)
 
-        self.spin_round_angle_start = create_spin_button(ROUND_START_DEFAULT, 0, 360, ROUND_ANGLE_DELTA, 2, self.on_spin_round_changed)
-        self.spin_round_angle_step  = create_spin_button(ROUND_STEP_DEFAULT, 1, 360, ROUND_ANGLE_DELTA, 2, self.on_spin_round_changed)
+        self.spin_round_angle_start = create_spin_button(ROUND_START_DEFAULT, 0, 360, ROUND_START_STEP, 2, self.on_spin_round_changed)
+        self.spin_round_angle_step  = create_spin_button(ROUND_STEP_DEFAULT, 1, 360, ROUND_STEP_STEP, 2, self.on_spin_round_changed)
 
         self.box_round_center_left.pack_start(self.label_round_posy, False, False, 0)
         self.box_round_center_left.pack_start(self.spin_round_posy, False, False, PACK_SPIN)
