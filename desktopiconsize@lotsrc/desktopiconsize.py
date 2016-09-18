@@ -57,7 +57,7 @@ OVERRIDE_HOME_PATH = None
 OVERRIDE_DESKTOP_PATH = None
 OVERRIDE_CONFIG_PATH = None
 
-# This could be changed to work with other file managers
+# These values could be changed to work with other file managers
 
 STRING_SCALE_SYSTEM = "icon-scale"
 STRING_POSITION_SYSTEM = "nemo-icon-position"
