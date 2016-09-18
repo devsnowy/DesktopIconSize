@@ -26,11 +26,11 @@
   It is the same method used when resizing with the mouse in the native Resize icon option.
 
   The refresh of the elements (making sure Cinnamon detects the changes) is made
-  by renaming the files with a suffix and then renaming again with the original name.
+  by renaming the files with a prefix and then renaming again with the original name.
 
-  The exception are system icons, in that case the file browser process is killed and restarted.
-  Pressing F5 in the desktop does not work, it causes the metadata file to be rewritten with
-  the data in memory.
+  The exception are system icons, since metadata is stored in a file. In that case the file
+  browser process is killed and restarted. Pressing F5 in the desktop does not work, it causes
+  the metadata file to be rewritten with the data in memory.
 
   The order of the elements is stored in a configuration file, it can be deleted in case of problems.
 
@@ -51,13 +51,13 @@ PROGRAM_VERSION = "1.0"
 PROGRAM_WEBSITE = "https://github.com/lotsrc/DesktopIconSize"
 PROGRAM_COPYRIGHT = "Copyright (C) 2016  Gaston Brito"
 
-# If changed these must end with /
+# If changed these values must end with /
 
 OVERRIDE_HOME_PATH = None
 OVERRIDE_DESKTOP_PATH = None
 OVERRIDE_CONFIG_PATH = None
 
-# These values could be changed to work with other file managers
+# These values might be changed to work with other file managers
 
 STRING_SCALE_SYSTEM = "icon-scale"
 STRING_POSITION_SYSTEM = "nemo-icon-position"
