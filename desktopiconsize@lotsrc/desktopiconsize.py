@@ -63,6 +63,7 @@ STRING_SCALE_SYSTEM = "icon-scale"
 STRING_POSITION_SYSTEM = "nemo-icon-position"
 SYSTEM_ICONS_FILE = ".config/nemo/desktop-metadata"
 
+REFRESH_PREFIX = "dis000_"
 NUM_PROFILES = 4
 
 MARGIN_TOP_DEFAULT = 100
@@ -1081,8 +1082,8 @@ def refresh_items(basepath, elements):
         if e.is_user:
             try:
                 filename = e.name
-                subprocess.check_output("mv '" + basepath + filename + "' '" + basepath + filename + "_dis000'", shell=True, stderr=subprocess.DEVNULL)
-                subprocess.check_output("mv '" + basepath + filename + "_dis000' '" + basepath + filename + "'", shell=True, stderr=subprocess.DEVNULL)
+                subprocess.check_output("mv '" + basepath + filename + "' '" + basepath + REFRESH_PREFIX + filename + "'", shell=True, stderr=subprocess.DEVNULL)
+                subprocess.check_output("mv '" + basepath + REFRESH_PREFIX + filename + "' '" + basepath + filename + "'", shell=True, stderr=subprocess.DEVNULL)
             except Exception as e:
                 log("Error refreshing " + filename + " : " + str(e))
 
