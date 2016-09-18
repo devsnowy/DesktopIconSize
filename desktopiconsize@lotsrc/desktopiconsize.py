@@ -830,7 +830,9 @@ class DISWindow(Gtk.Window):
             self.active_profile = self.combo_active_profile.get_active()
             original_value = self.apply_on_change
             self.apply_on_change = False
+            self.update_organization = False
             self.set_organization(self.organizations[self.active_profile])
+            self.update_organization = True
             self.update_list_elements()
             self.apply_on_change = original_value
             self.apply_organization()
@@ -847,6 +849,12 @@ class DISWindow(Gtk.Window):
         if self.update_organization:
             self.organizations[self.active_profile].update_bar(self)
             self.apply_organization()
+            save_config(self)
+
+    def on_bar_changed(self, event):
+        if self.update_organization:
+            self.organizations[self.active_profile].update_bar(self)
+            self.apply_organization(True)
             save_config(self)
 
     def on_margin_changed(self, event):
@@ -898,12 +906,6 @@ class DISWindow(Gtk.Window):
                     self.treeview_elements_selection.select_path(index + 1)
                     self.apply_organization()
                     save_config(self)
-
-    def on_bar_changed(self, event):
-        if self.update_organization:
-            self.organizations[self.active_profile].update_bar(self)
-            self.apply_organization(True)
-            save_config(self)
 
     def on_spin_round_changed(self, event):
         if self.update_organization:
