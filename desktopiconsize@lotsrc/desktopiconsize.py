@@ -975,7 +975,7 @@ def get_desktop_path():
         desktopdir = subprocess.check_output("xdg-user-dir DESKTOP", shell=True, stderr=subprocess.DEVNULL)
         desktopdir = desktopdir.decode("utf-8")
         ret_dir = desktopdir
-    except:
+    except Exception as e:
         pass
     if ret_dir is None:
         ret_dir = get_home_path() + "Desktop/"
@@ -1014,7 +1014,7 @@ def get_desktop_list(system_elements_path):
             for s in system_elements:
                 log(s.name)
             return system_elements + res
-        except:
+        except Exception as e:
             return res
     return res
 
