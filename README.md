@@ -4,6 +4,8 @@ Cinnamon applet to change size and position of desktop icons
 
 ![](https://raw.githubusercontent.com/wiki/lotsrc/DesktopIconSize/screenshot_main.png)
 
+![](https://raw.githubusercontent.com/wiki/lotsrc/DesktopIconSize/demo.gif)
+
 ## Features
 
 * Precise icon size selection
