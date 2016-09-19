@@ -106,7 +106,7 @@ log_data = ""
 
 
 class DesktopElement:
-    """A shortcut in the desktop"""
+    """An icon on the desktop"""
 
     def __init__(self, name, scale, position_x, position_y, is_user):
         self.name = name
