@@ -30,4 +30,4 @@ It is recommended setting the desktop context menu option *Keep aligned* disable
 
 ## License
 
-See [LICENSE](LICENSE)
+GNU General Public License version 2 or later. See [LICENSE](LICENSE)
