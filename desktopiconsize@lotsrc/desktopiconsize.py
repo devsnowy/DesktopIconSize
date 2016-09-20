@@ -34,6 +34,17 @@
 
   The order of the elements is stored in a configuration file, it can be deleted in case of problems.
 
+  Limitations :
+
+  * All system icons in the metadata file appear in the order list, even the ones not showing on screen.
+    Their status might be read from some configuration, leaving them at the end of the list should not
+    affect with the layouts.
+
+  * The flickering is caused by the slow refresh method, this could be improved a lot by adding some
+    communication with the file browser. A scale bar is also impractical with the current speed.
+
+  * The type of icon elements are not read/detected.
+
   Tested with :
 
   * Linux Mint 18.0 64 bit  Cinnamon 3.0.7  nemo 3.0.6  Python 3.5.2
