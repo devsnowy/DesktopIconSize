@@ -43,7 +43,7 @@
   * The flickering is caused by the slow refresh method, this could be improved a lot by adding some
     communication with the file browser. A scale bar is also impractical with the current speed.
 
-  * The type of icon elements are not read/detected.
+  * The types are not read/detected.
 
   Tested with :
 
