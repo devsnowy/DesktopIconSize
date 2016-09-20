@@ -41,9 +41,12 @@
     affect with the layouts.
 
   * The flickering is caused by the slow refresh method, this could be improved a lot by adding some
-    communication with the file browser. A scale bar is also impractical with the current speed.
+    communication with the file browser. The same thing with the restart for system icons.
+    A scale bar is also impractical with the current speed.
 
   * The types are not read/detected.
+
+  * Only works with Cinnamon, a combo box/detection might be added to work with other environments.
 
   Tested with :
 
