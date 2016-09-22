@@ -50,8 +50,8 @@
 
   Tested with :
 
-  * Linux Mint 18.0 64 bit  Cinnamon 3.0.7  nemo 3.0.6  Python 3.5.2
-  * Linux Mint 17.0 32 bit  Cinnamon 2.2    nemo 2.2    Python 3.4.0
+  * Linux Mint 18.0 64 bit  Cinnamon 3.0.7   nemo 3.0.6  Python 3.5.2
+  * Linux Mint 17.0 32 bit  Cinnamon 2.2.13  nemo 2.2.2  Python 3.4.0
 """
 
 import os, subprocess, sys, configparser, math, copy
