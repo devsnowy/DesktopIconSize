@@ -106,15 +106,8 @@ PACK_SPIN = 2
 LOG_BORDER = 2
 RESIZE_VERTICAL_DELTA = 100
 
-LAYOUTS = ["Horizontal",
-           "Vertical",
-           "Double Horizontal",
-           "Double Vertical",
-           "Round"]
-
-BAR_TYPES = ["None",
-             "Horizontal",
-             "Vertical"]
+LAYOUTS = ["Horizontal", "Vertical", "Double Horizontal", "Double Vertical", "Round"]
+BAR_TYPES = ["None", "Horizontal", "Vertical"]
 
 log_data = ""
 
