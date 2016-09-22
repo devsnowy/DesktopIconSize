@@ -80,6 +80,10 @@ SYSTEM_ICONS_FILE = ".config/nemo/desktop-metadata"
 REFRESH_PREFIX = "dis000_"
 NUM_PROFILES = 4
 
+SCALE_MIN = 0.5
+SCALE_MAX = 8
+SCALE_STEP = 0.1
+
 MARGIN_TOP_DEFAULT = 100
 MARGIN_BOTTOM_DEFAULT = 200
 MARGIN_LEFT_DEFAULT = 120
@@ -587,7 +591,7 @@ class DISWindow(Gtk.Window):
         self.label_scale = Gtk.Label("Scale", xalign=0)
         self.box_scale.pack_start(self.label_scale, False, False, 0)
 
-        self.scale = create_spin_button(1, 0.5, 8, 0.1, 2, self.on_scale_changed)
+        self.scale = create_spin_button(1, SCALE_MIN, SCALE_MAX, SCALE_STEP, 2, self.on_scale_changed)
         self.box_scale.add(self.scale)
 
     def create_ui_margins(self, screen_width, screen_height):
