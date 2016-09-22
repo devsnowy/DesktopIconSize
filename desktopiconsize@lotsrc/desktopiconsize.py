@@ -103,6 +103,8 @@ ROUND_START_DEFAULT = 270
 ROUND_STEP_DEFAULT = 15
 ROUND_START_STEP = 5.0
 ROUND_STEP_STEP = 0.5
+ROUND_POS_STEP = 10
+ROUND_RADIUS_STEP = 10
 
 MAIN_BORDER = 5
 BOX_BORDER = 5
@@ -720,8 +722,8 @@ class DISWindow(Gtk.Window):
         self.label_round_posx = Gtk.Label("Left", xalign=0)
         self.label_round_posy = Gtk.Label("Top", xalign=0)
 
-        self.spin_round_posx = create_spin_button(screen_width / 2, 0, 1000, 10, 0, self.on_spin_round_changed)
-        self.spin_round_posy = create_spin_button(screen_height / 2, 0, 1000, 10, 0, self.on_spin_round_changed)
+        self.spin_round_posx = create_spin_button(screen_width / 2, 0, screen_width, ROUND_POS_STEP, 0, self.on_spin_round_changed)
+        self.spin_round_posy = create_spin_button(screen_height / 2, 0, screen_height, ROUND_POS_STEP, 0, self.on_spin_round_changed)
 
         self.box_round_size = create_hbox(BOX_BORDER)
         self.box_round_size_left = create_vbox(0)
@@ -735,8 +737,8 @@ class DISWindow(Gtk.Window):
 
         min_dim = int(min(screen_width, screen_height) / 3)
 
-        self.spin_round_radiusx = create_spin_button(min_dim, 0, 1000, 10, 0, self.on_spin_round_changed)
-        self.spin_round_radiusy = create_spin_button(min_dim, 0, 1000, 10, 0, self.on_spin_round_changed)
+        self.spin_round_radiusx = create_spin_button(min_dim, 0, screen_width, ROUND_RADIUS_STEP, 0, self.on_spin_round_changed)
+        self.spin_round_radiusy = create_spin_button(min_dim, 0, screen_height, ROUND_RADIUS_STEP, 0, self.on_spin_round_changed)
 
         self.box_round_distance = create_hbox(BOX_BORDER)
         self.box_round_distance_left = create_vbox(0)
