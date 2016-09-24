@@ -9,6 +9,7 @@ Cinnamon applet to change size and position of desktop icons
 ## Features
 
 * Precise icon size selection
+* Custom desktop grid
 * 5 different layouts
 * Icon ordering
 * Bar sub layout
