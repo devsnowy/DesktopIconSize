@@ -106,6 +106,7 @@ ROUND_STEP_STEP = 0.5
 ROUND_POS_STEP = 10
 ROUND_RADIUS_STEP = 10
 
+BUTTON_ELEMENTS_SIZE = 16
 MAIN_BORDER = 5
 BOX_BORDER = 5
 PACK_SPIN = 2
@@ -793,13 +794,13 @@ class DISWindow(Gtk.Window):
 
         self.box_order_buttons = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=2)
 
-        self.button_up = create_button("Up", self.on_button_up_clicked)
-        self.button_down = create_button("Down", self.on_button_down_clicked)
-        self.button_refresh = create_button("Reload", self.on_button_refresh_clicked)
+        self.button_up = create_button_image(get_program_directory() + "images/up.svg", BUTTON_ELEMENTS_SIZE, "Move element up", self.on_button_up_clicked)
+        self.button_down = create_button_image(get_program_directory() + "images/down.svg", BUTTON_ELEMENTS_SIZE, "Move element down", self.on_button_down_clicked)
+        self.button_refresh = create_button_image(get_program_directory() + "images/reload.svg", BUTTON_ELEMENTS_SIZE, "Reload elements", self.on_button_refresh_clicked)
 
-        self.box_order_buttons.pack_start(self.button_up, False, False, 3)
-        self.box_order_buttons.pack_start(self.button_down, False, False, 3)
-        self.box_order_buttons.pack_start(self.button_refresh, False, False, 3)
+        self.box_order_buttons.pack_start(self.button_up, False, False, 0)
+        self.box_order_buttons.pack_start(self.button_down, False, False, 0)
+        self.box_order_buttons.pack_start(self.button_refresh, False, False, 0)
 
         self.box_list_elements.pack_start(self.box_order_buttons, False, False, 5)
 
@@ -1210,8 +1211,18 @@ def load_config(window):
                 window.organizations[i].order[j] = ordered[j][0]
 
 
-def create_button(value, click_function):
-    button = Gtk.Button(value)
+def create_button(text, click_function):
+    button = Gtk.Button(text)
+    button.connect("clicked", click_function)
+    return button
+
+
+def create_button_image(image_path, size, tooltip_text, click_function):
+    button = Gtk.Button()
+    image = Gtk.Image.new_from_file(image_path)
+    button.set_size_request(size, size)
+    button.add(image)
+    button.set_tooltip_text(tooltip_text)
     button.connect("clicked", click_function)
     return button
 
