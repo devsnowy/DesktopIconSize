@@ -801,8 +801,8 @@ class DISWindow(Gtk.Window):
         self.button_refresh = create_button_image(get_program_directory() + "images/reload.svg", BUTTON_ELEMENTS_SIZE, "Reload elements", self.on_button_refresh_clicked)
 
         self.box_order_buttons.pack_start(self.button_up, False, False, 0)
-        self.box_order_buttons.pack_start(self.button_down, False, False, 0)
         self.box_order_buttons.pack_start(self.button_top, False, False, 0)
+        self.box_order_buttons.pack_start(self.button_down, False, False, 0)
         self.box_order_buttons.pack_start(self.button_bottom, False, False, 0)
         self.box_order_buttons.pack_start(self.button_refresh, False, False, 0)
 
@@ -926,10 +926,32 @@ class DISWindow(Gtk.Window):
                     save_config(self)
 
     def on_button_top_clicked(self, button):
-        pass
+        model, it = self.treeview_elements_selection.get_selected()
+        if it is not None:
+            path = model.get_path(it).get_indices()
+            if len(path) > 0:
+                index = path[0]
+                if index > 0:
+                    for n in range(index, 0, -1):
+                        self.swap_order(n - 1, n)
+                    self.update_list_elements()
+                    self.treeview_elements_selection.select_path(0)
+                    self.apply_organization()
+                    save_config(self)
 
     def on_button_bottom_clicked(self, button):
-        pass
+        model, it = self.treeview_elements_selection.get_selected()
+        if it is not None:
+            path = model.get_path(it).get_indices()
+            if len(path) > 0:
+                index = path[0]
+                if index + 1 < len(self.organizations[self.active_profile].elements):
+                    for n in range(index, len(self.organizations[self.active_profile].elements) - 1):
+                        self.swap_order(n, n + 1)
+                    self.update_list_elements()
+                    self.treeview_elements_selection.select_path(len(self.organizations[self.active_profile].elements) - 1)
+                    self.apply_organization()
+                    save_config(self)
 
     def on_spin_round_changed(self, event):
         if self.update_organization:
