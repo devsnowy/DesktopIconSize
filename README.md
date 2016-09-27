@@ -6,6 +6,8 @@ Cinnamon applet to change size and position of desktop icons
 
 ![Organizing the desktop](https://raw.githubusercontent.com/wiki/lotsrc/DesktopIconSize/demo.gif)
 
+Spices entry : ![https://cinnamon-spices.linuxmint.com/applets/view/268](https://cinnamon-spices.linuxmint.com/applets/view/268)
+
 ## Features
 
 * Precise icon size selection
