@@ -106,6 +106,7 @@ ROUND_STEP_STEP = 0.5
 ROUND_POS_STEP = 10
 ROUND_RADIUS_STEP = 10
 
+BUTTON_ELEMENTS_SIZE = 16
 MAIN_BORDER = 5
 BOX_BORDER = 5
 PACK_SPIN = 2
@@ -679,6 +680,7 @@ class DISWindow(Gtk.Window):
 
         self.label_bar_items = Gtk.Label("# First items", xalign=0)
         self.spin_bar_items = create_spin_button(BAR_ITEMS_DEFAULT, 1, 1000, 1, 0, self.on_bar_changed)
+        self.spin_bar_items.set_tooltip_text("Number of elements used to make the bar")
 
         self.box_bar_left.pack_start(self.label_bar_type, False, False, 0)
         self.box_bar_left.pack_start(self.combo_bar, False, False, PACK_SPIN)
@@ -693,6 +695,8 @@ class DISWindow(Gtk.Window):
 
         self.spin_bar_posx = create_spin_button(BAR_POSX_DEFAULT, 0, screen_width, BAR_STEP, 0, self.on_bar_changed)
         self.spin_bar_posy = create_spin_button(BAR_POSY_DEFAULT, 0, screen_height, BAR_STEP, 0, self.on_bar_changed)
+        self.spin_bar_posx.set_tooltip_text("Starting position of bar")
+        self.spin_bar_posy.set_tooltip_text("Starting position of bar")
 
         self.box_bar_left.pack_start(self.label_bar_posy, False, False, 0)
         self.box_bar_left.pack_start(self.spin_bar_posy, False, False, PACK_SPIN)
@@ -793,13 +797,19 @@ class DISWindow(Gtk.Window):
 
         self.box_order_buttons = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=2)
 
-        self.button_up = create_button("Up", self.on_button_up_clicked)
-        self.button_down = create_button("Down", self.on_button_down_clicked)
-        self.button_refresh = create_button("Reload", self.on_button_refresh_clicked)
+        self.button_up = create_button_image(get_program_directory() + "images/up.svg", BUTTON_ELEMENTS_SIZE, "Move element up", self.on_button_up_clicked)
+        self.button_down = create_button_image(get_program_directory() + "images/down.svg", BUTTON_ELEMENTS_SIZE, "Move element down", self.on_button_down_clicked)
+        self.button_top = create_button_image(get_program_directory() + "images/top.svg", BUTTON_ELEMENTS_SIZE, "Move element top", self.on_button_top_clicked)
+        self.button_bottom = create_button_image(get_program_directory() + "images/bottom.svg", BUTTON_ELEMENTS_SIZE, "Move element bottom", self.on_button_bottom_clicked)
+        self.button_refresh = create_button_image(get_program_directory() + "images/reload.svg", BUTTON_ELEMENTS_SIZE, "Reload elements", self.on_button_refresh_clicked)
+        #self.button_sort_menu = create_button_image(get_program_directory() + "images/menu.svg", BUTTON_ELEMENTS_SIZE, "Sort options", self.on_button_refresh_clicked)
 
-        self.box_order_buttons.pack_start(self.button_up, False, False, 3)
-        self.box_order_buttons.pack_start(self.button_down, False, False, 3)
-        self.box_order_buttons.pack_start(self.button_refresh, False, False, 3)
+        self.box_order_buttons.pack_start(self.button_up, False, False, 0)
+        self.box_order_buttons.pack_start(self.button_down, False, False, 0)
+        self.box_order_buttons.pack_start(self.button_top, False, False, 0)
+        self.box_order_buttons.pack_start(self.button_bottom, False, False, 0)
+        self.box_order_buttons.pack_start(self.button_refresh, False, False, 0)
+        #self.box_order_buttons.pack_start(self.button_sort_menu, False, False, 0)
 
         self.box_list_elements.pack_start(self.box_order_buttons, False, False, 5)
 
@@ -889,6 +899,11 @@ class DISWindow(Gtk.Window):
             self.apply_organization()
             save_config(self)
 
+    def swap_order(self, i, j):
+        tmp = self.organizations[self.active_profile].order[i]
+        self.organizations[self.active_profile].order[i] = self.organizations[self.active_profile].order[j]
+        self.organizations[self.active_profile].order[j] = tmp
+
     def on_button_up_clicked(self, button):
         model, it = self.treeview_elements_selection.get_selected()
         if it is not None:
@@ -896,10 +911,7 @@ class DISWindow(Gtk.Window):
             if len(path) > 0:
                 index = path[0]
                 if index > 0:
-                    tmp = self.organizations[self.active_profile].order[index - 1]
-                    self.organizations[self.active_profile].order[index - 1] = self.organizations[self.active_profile].order[index]
-                    self.organizations[self.active_profile].order[index] = tmp
-
+                    self.swap_order(index - 1, index)
                     self.update_list_elements()
                     self.treeview_elements_selection.select_path(index - 1)
                     self.apply_organization()
@@ -912,12 +924,37 @@ class DISWindow(Gtk.Window):
             if len(path) > 0:
                 index = path[0]
                 if index + 1 < len(self.organizations[self.active_profile].elements):
-                    tmp = self.organizations[self.active_profile].order[index + 1]
-                    self.organizations[self.active_profile].order[index + 1] = self.organizations[self.active_profile].order[index]
-                    self.organizations[self.active_profile].order[index] = tmp
-
+                    self.swap_order(index + 1, index)
                     self.update_list_elements()
                     self.treeview_elements_selection.select_path(index + 1)
+                    self.apply_organization()
+                    save_config(self)
+
+    def on_button_top_clicked(self, button):
+        model, it = self.treeview_elements_selection.get_selected()
+        if it is not None:
+            path = model.get_path(it).get_indices()
+            if len(path) > 0:
+                index = path[0]
+                if index > 0:
+                    for n in range(index, 0, -1):
+                        self.swap_order(n - 1, n)
+                    self.update_list_elements()
+                    self.treeview_elements_selection.select_path(0)
+                    self.apply_organization()
+                    save_config(self)
+
+    def on_button_bottom_clicked(self, button):
+        model, it = self.treeview_elements_selection.get_selected()
+        if it is not None:
+            path = model.get_path(it).get_indices()
+            if len(path) > 0:
+                index = path[0]
+                if index + 1 < len(self.organizations[self.active_profile].elements):
+                    for n in range(index, len(self.organizations[self.active_profile].elements) - 1):
+                        self.swap_order(n, n + 1)
+                    self.update_list_elements()
+                    self.treeview_elements_selection.select_path(len(self.organizations[self.active_profile].elements) - 1)
                     self.apply_organization()
                     save_config(self)
 
@@ -1210,8 +1247,18 @@ def load_config(window):
                 window.organizations[i].order[j] = ordered[j][0]
 
 
-def create_button(value, click_function):
-    button = Gtk.Button(value)
+def create_button(text, click_function):
+    button = Gtk.Button(text)
+    button.connect("clicked", click_function)
+    return button
+
+
+def create_button_image(image_path, size, tooltip_text, click_function):
+    button = Gtk.Button()
+    image = Gtk.Image.new_from_file(image_path)
+    button.set_size_request(size, size)
+    button.add(image)
+    button.set_tooltip_text(tooltip_text)
     button.connect("clicked", click_function)
     return button
 
