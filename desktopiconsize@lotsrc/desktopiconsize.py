@@ -680,6 +680,7 @@ class DISWindow(Gtk.Window):
 
         self.label_bar_items = Gtk.Label("# First items", xalign=0)
         self.spin_bar_items = create_spin_button(BAR_ITEMS_DEFAULT, 1, 1000, 1, 0, self.on_bar_changed)
+        self.spin_bar_items.set_tooltip_text("Number of elements used to make the bar")
 
         self.box_bar_left.pack_start(self.label_bar_type, False, False, 0)
         self.box_bar_left.pack_start(self.combo_bar, False, False, PACK_SPIN)
@@ -694,6 +695,8 @@ class DISWindow(Gtk.Window):
 
         self.spin_bar_posx = create_spin_button(BAR_POSX_DEFAULT, 0, screen_width, BAR_STEP, 0, self.on_bar_changed)
         self.spin_bar_posy = create_spin_button(BAR_POSY_DEFAULT, 0, screen_height, BAR_STEP, 0, self.on_bar_changed)
+        self.spin_bar_posx.set_tooltip_text("Starting position of bar")
+        self.spin_bar_posy.set_tooltip_text("Starting position of bar")
 
         self.box_bar_left.pack_start(self.label_bar_posy, False, False, 0)
         self.box_bar_left.pack_start(self.spin_bar_posy, False, False, PACK_SPIN)
@@ -799,12 +802,14 @@ class DISWindow(Gtk.Window):
         self.button_top = create_button_image(get_program_directory() + "images/top.svg", BUTTON_ELEMENTS_SIZE, "Move element top", self.on_button_top_clicked)
         self.button_bottom = create_button_image(get_program_directory() + "images/bottom.svg", BUTTON_ELEMENTS_SIZE, "Move element bottom", self.on_button_bottom_clicked)
         self.button_refresh = create_button_image(get_program_directory() + "images/reload.svg", BUTTON_ELEMENTS_SIZE, "Reload elements", self.on_button_refresh_clicked)
+        #self.button_sort_menu = create_button_image(get_program_directory() + "images/menu.svg", BUTTON_ELEMENTS_SIZE, "Sort options", self.on_button_refresh_clicked)
 
         self.box_order_buttons.pack_start(self.button_up, False, False, 0)
-        self.box_order_buttons.pack_start(self.button_top, False, False, 0)
         self.box_order_buttons.pack_start(self.button_down, False, False, 0)
+        self.box_order_buttons.pack_start(self.button_top, False, False, 0)
         self.box_order_buttons.pack_start(self.button_bottom, False, False, 0)
         self.box_order_buttons.pack_start(self.button_refresh, False, False, 0)
+        #self.box_order_buttons.pack_start(self.button_sort_menu, False, False, 0)
 
         self.box_list_elements.pack_start(self.box_order_buttons, False, False, 5)
 
