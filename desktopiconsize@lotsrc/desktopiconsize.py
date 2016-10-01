@@ -61,7 +61,7 @@ from gi.repository import Gtk, GdkPixbuf
 
 WINDOW_TITLE = "Desktop Icon Size"
 CONFIGURATION_FILE = ".desktopiconsize.conf"
-PROGRAM_VERSION = "1.0"
+PROGRAM_VERSION = "1.1"
 PROGRAM_WEBSITE = "https://github.com/lotsrc/DesktopIconSize"
 PROGRAM_COPYRIGHT = "Copyright (C) 2016  Gaston Brito"
 
