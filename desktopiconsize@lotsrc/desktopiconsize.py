@@ -46,8 +46,6 @@
 
   * The types are not read/detected.
 
-  * Only works with Cinnamon, a combo box/detection might be added to work with other environments.
-
   Tested with :
 
   * Linux Mint 18.0 64 bit  Cinnamon 3.0.7   nemo 3.0.6  Python 3.5.2
@@ -71,11 +69,9 @@ OVERRIDE_HOME_PATH = None
 OVERRIDE_DESKTOP_PATH = None
 OVERRIDE_CONFIG_PATH = None
 
-# These values might be changed to work with other file managers
-
-STRING_SCALE_SYSTEM = "icon-scale"
-STRING_POSITION_SYSTEM = "nemo-icon-position"
-SYSTEM_ICONS_FILE = ".config/nemo/desktop-metadata"
+FILE_MANAGER_PARAMETERS = [("nemo (Cinnamon)", "icon-scale", "nemo-icon-position", ".config/nemo/desktop-metadata", 'sh -c "nemo --quit && sleep 1 && nemo"'),
+                           ("caja (MATE)", "icon-scale", "caja-icon-position", ".config/caja/desktop-metadata", 'sh -c "caja --quit && sleep 1 && caja"'),
+                           ("nautilus (Ubuntu / GNOME)", "icon-scale", "nautilus-icon-position", ".config/nautilus/desktop-metadata", 'sh -c "nautilus --quit && sleep 1 && nautilus"')]
 
 REFRESH_PREFIX = "dis000_"
 NUM_PROFILES = 4
@@ -138,11 +134,11 @@ class DesktopElement:
             return self.name[:pos_volume]
         return self.name
 
-    def set_metadata(self, cfg, base_path, scale, x, y, just_scale):
+    def set_metadata(self, file_manager_index, cfg, base_path, scale, x, y, just_scale):
         if self.is_user:
-            set_file_metadata(base_path, self.name, scale, x, y, just_scale)
+            set_file_metadata(file_manager_index, base_path, self.name, scale, x, y, just_scale)
         else:
-            set_file_metadata_system(cfg, self.name, scale, x, y, just_scale)
+            set_file_metadata_system(file_manager_index, cfg, self.name, scale, x, y, just_scale)
 
     @staticmethod
     def order_by_name(lista):
@@ -219,7 +215,7 @@ class RoundPositionGenerator:
 class Organization:
     """Parameters used to generate the icon layout"""
 
-    def __init__(self, screen_width, screen_height, system_metadata_path, desktop_path, elements, order, manage_system_icons):
+    def __init__(self, screen_width, screen_height, system_metadata_path, desktop_path, elements, order, file_manager_index, manage_system_icons):
         self.layout = 0
         self.scale = 1.0
         self.margin_top = MARGIN_TOP_DEFAULT
@@ -233,6 +229,7 @@ class Organization:
         self.order = order
         self.desktop_path = desktop_path
         self.system_metadata_path = system_metadata_path
+        self.file_manager_index = file_manager_index
         self.manage_system_icons = manage_system_icons
         # Bar
         self.bar_type = 0
@@ -279,6 +276,7 @@ class Organization:
         self.round_step = window.spin_round_angle_step.get_value()
 
     def update_settings(self, window):
+        self.file_manager_index = window.file_manager_index
         self.manage_system_icons = window.manage_system_elements
 
     def apply(self, just_scale=False):
@@ -306,7 +304,7 @@ class Organization:
             if self.manage_system_icons or elem.is_user:
                 posxc = clamp(gen.get_position()[0], 0, self.screen_resolution[0])
                 posyc = clamp(gen.get_position()[1], 0, self.screen_resolution[1])
-                elem.set_metadata(config, self.desktop_path, self.scale, posxc, posyc, just_scale)
+                elem.set_metadata(self.file_manager_index, config, self.desktop_path, self.scale, posxc, posyc, just_scale)
                 gen.next()
 
         refresh_items(self.desktop_path, self.elements)
@@ -329,7 +327,7 @@ class Organization:
                 found += 1
                 posxc = clamp(gen.get_position()[0], 0, self.screen_resolution[0])
                 posyc = clamp(gen.get_position()[1], 0, self.screen_resolution[1])
-                elem.set_metadata(cfg, self.desktop_path, self.scale, posxc, posyc, just_scale)
+                elem.set_metadata(self.file_manager_index, cfg, self.desktop_path, self.scale, posxc, posyc, just_scale)
                 gen.next()
             skip += 1
         return skip
@@ -372,6 +370,7 @@ class DISWindow(Gtk.Window):
         self.update_organization = False
         self.active_profile = 0
         self.manage_system_elements = False
+        self.file_manager_index = 0
 
         self.screen_resolution = get_monitor_dimensions()
         self.log("Detected screen resolution " + str(self.screen_resolution), False)
@@ -379,29 +378,29 @@ class DISWindow(Gtk.Window):
         self.desktop_path = get_desktop_path()
         self.log("Using desktop path " + self.desktop_path, False)
 
-        self.system_metadata_path = get_system_metadata_path()
-        self.log("Using system metadata path " + self.system_metadata_path, False)
-
         self.load_icon()
         self.create_ui(self.screen_resolution[0], self.screen_resolution[1])
 
+        load_config(self, True)
+
+        self.system_metadata_path = get_system_metadata_path(self.file_manager_index)
+        self.log("Using system metadata path " + self.system_metadata_path, False)
+
         # Default organizations
 
-        elements = get_desktop_list(self.system_metadata_path)
+        elements = get_desktop_list(self.system_metadata_path if self.manage_system_elements else None)
         order_elements = DesktopElement.order_by_name(elements)
         self.organizations = []
         for i in range(NUM_PROFILES):
-            self.organizations.append(Organization(self.screen_resolution[0], self.screen_resolution[1], self.system_metadata_path, self.desktop_path, copy.deepcopy(elements), list(order_elements), False))
+            self.organizations.append(Organization(self.screen_resolution[0], self.screen_resolution[1], self.system_metadata_path, self.desktop_path, copy.deepcopy(elements), list(order_elements), self.file_manager_index, False))
 
         load_config(self)
         self.combo_active_profile.set_active(self.active_profile)
+        self.combo_file_manager.set_active(self.file_manager_index)
         self.switch_system_icons.set_active(self.manage_system_elements)
-        if self.manage_system_elements:
-            self.update_list_elements()
-            for i in range(NUM_PROFILES):
-                self.organizations[i].update_settings(self)
-        else:
-            reload_elements(self)
+        self.update_list_elements()
+        for i in range(NUM_PROFILES):
+            self.organizations[i].update_settings(self)
         self.set_organization(self.organizations[self.active_profile])
         self.apply_on_change = not self.manage_system_elements
         self.update_organization = True
@@ -480,11 +479,10 @@ class DISWindow(Gtk.Window):
 
         self.label_active_profile = Gtk.Label("Active profile", xalign=0)
 
-        self.combo_active_profile = Gtk.ComboBoxText()
+        profile_list = []
         for i in range(NUM_PROFILES):
-            self.combo_active_profile.append_text("Profile " + str(i + 1))
-        self.combo_active_profile.set_active(self.active_profile)
-        self.combo_active_profile.connect("changed", self.on_combo_active_profile_changed)
+            profile_list.append("Profile " + str(i + 1))
+        self.combo_active_profile = create_combobox(profile_list, self.active_profile, self.on_combo_active_profile_changed)
 
         self.box_active_profile.pack_start(self.label_active_profile, False, False, 0)
         self.box_active_profile.pack_start(self.combo_active_profile, False, False, 0)
@@ -505,16 +503,25 @@ class DISWindow(Gtk.Window):
 
     def create_settings(self):
         self.box_system_icons = create_hbox(BOX_BORDER)
+        self.box_file_manager = create_hbox(BOX_BORDER)
 
         self.label_system_icons = Gtk.Label("Manage system icons. Requires nemo restart to apply changes", xalign=0)
         self.switch_system_icons = Gtk.Switch()
         self.switch_system_icons.set_active(False)
         self.switch_system_icons.connect("notify::active", self.on_switch_system_icons_activated)
 
+        self.label_file_manager = Gtk.Label("File manager", xalign=0)
+        self.combo_file_manager = create_combobox([item[0] for item in FILE_MANAGER_PARAMETERS], 0, self.on_combo_file_manager_changed)
+
         self.box_system_icons.pack_start(self.label_system_icons, False, False, 0)
         self.box_system_icons.pack_end(self.switch_system_icons, False, False, 0)
 
+        self.box_file_manager.pack_start(self.label_file_manager, False, False, 0)
+        self.box_file_manager.pack_end(self.combo_file_manager, False, False, 0)
+
+        self.box_page_settings.pack_start(self.box_file_manager, False, False, 0)
         self.box_page_settings.pack_start(self.box_system_icons, False, False, 0)
+
 
     def create_ui_info(self):
         self.box_info = create_hbox(BOX_BORDER)
@@ -574,14 +581,9 @@ class DISWindow(Gtk.Window):
         self.box_layouts = create_vbox(BOX_BORDER)
 
         self.label_layouts = Gtk.Label("Layout", xalign=0)
-        self.box_layouts .pack_start(self.label_layouts, False, False, 0)
+        self.combo_layout = create_combobox(LAYOUTS, 0, self.on_combo_layout_changed)
 
-        self.combo_layout = Gtk.ComboBoxText()
-        for layout in LAYOUTS:
-            self.combo_layout.append_text(layout)
-        self.combo_layout.set_active(0)
-        self.combo_layout.connect("changed", self.on_combo_layout_changed)
-
+        self.box_layouts.pack_start(self.label_layouts, False, False, 0)
         self.box_layouts.pack_start(self.combo_layout, False, False, 0)
 
         self.box_icon_left.pack_start(self.box_layouts, False, False, 0)
@@ -797,10 +799,10 @@ class DISWindow(Gtk.Window):
 
         self.box_order_buttons = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=2)
 
-        self.button_up = create_button_image(get_program_directory() + "images/up.svg", BUTTON_ELEMENTS_SIZE, "Move element up", self.on_button_up_clicked)
-        self.button_down = create_button_image(get_program_directory() + "images/down.svg", BUTTON_ELEMENTS_SIZE, "Move element down", self.on_button_down_clicked)
-        self.button_top = create_button_image(get_program_directory() + "images/top.svg", BUTTON_ELEMENTS_SIZE, "Move element top", self.on_button_top_clicked)
-        self.button_bottom = create_button_image(get_program_directory() + "images/bottom.svg", BUTTON_ELEMENTS_SIZE, "Move element bottom", self.on_button_bottom_clicked)
+        self.button_up = create_button_image(get_program_directory() + "images/up.svg", BUTTON_ELEMENTS_SIZE, "Move selected element up", self.on_button_up_clicked)
+        self.button_down = create_button_image(get_program_directory() + "images/down.svg", BUTTON_ELEMENTS_SIZE, "Move selected element down", self.on_button_down_clicked)
+        self.button_top = create_button_image(get_program_directory() + "images/top.svg", BUTTON_ELEMENTS_SIZE, "Move selected element top", self.on_button_top_clicked)
+        self.button_bottom = create_button_image(get_program_directory() + "images/bottom.svg", BUTTON_ELEMENTS_SIZE, "Move selected element bottom", self.on_button_bottom_clicked)
         self.button_refresh = create_button_image(get_program_directory() + "images/reload.svg", BUTTON_ELEMENTS_SIZE, "Reload elements", self.on_button_refresh_clicked)
         #self.button_sort_menu = create_button_image(get_program_directory() + "images/menu.svg", BUTTON_ELEMENTS_SIZE, "Sort options", self.on_button_refresh_clicked)
 
@@ -980,6 +982,19 @@ class DISWindow(Gtk.Window):
             reload_elements(self)
             save_config(self)
 
+    def on_combo_file_manager_changed(self, combo):
+        if self.update_organization:
+            self.file_manager_index = self.combo_file_manager.get_active()
+            self.log("Switching to file manager " + str(self.file_manager_index))
+            self.system_metadata_path = get_system_metadata_path(self.file_manager_index)
+            self.log("Using system metadata path " + self.system_metadata_path)
+            for i in range(NUM_PROFILES):
+                self.organizations[i].update_settings(self)
+                self.organizations[i].system_metadata_path = self.system_metadata_path
+            reload_elements(self)
+            self.log("")
+            save_config(self)
+
     def on_button_apply_clicked(self, event):
         self.organizations[self.active_profile].apply()
         if self.manage_system_elements:
@@ -1036,8 +1051,8 @@ def get_desktop_path():
     return format_directory_path(ret_dir)
 
 
-def get_system_metadata_path():
-    return get_home_path() + SYSTEM_ICONS_FILE
+def get_system_metadata_path(file_manager_index):
+    return get_home_path() + FILE_MANAGER_PARAMETERS[file_manager_index][3]
 
 
 def get_config_file_path():
@@ -1101,11 +1116,11 @@ def get_desktop_system_elements(cad):
     return res
 
 
-def set_file_metadata(base_path, file_name, scale, x, y, just_scale):
+def set_file_metadata(file_manager_index, base_path, file_name, scale, x, y, just_scale):
     try:
-        subprocess.check_output("gvfs-set-attribute '" + base_path + file_name + "' metadata::" + STRING_SCALE_SYSTEM + " " + str(scale), shell=True, stderr=subprocess.DEVNULL)
+        subprocess.check_output("gvfs-set-attribute '" + base_path + file_name + "' metadata::" + FILE_MANAGER_PARAMETERS[file_manager_index][1] + " " + str(scale), shell=True, stderr=subprocess.DEVNULL)
         if not just_scale:
-            subprocess.check_output("gvfs-set-attribute '" + base_path + file_name + "' metadata::" + STRING_POSITION_SYSTEM + " " + str(x) + ',' + str(y), shell=True, stderr=subprocess.DEVNULL)
+            subprocess.check_output("gvfs-set-attribute '" + base_path + file_name + "' metadata::" + FILE_MANAGER_PARAMETERS[file_manager_index][2] + " " + str(x) + ',' + str(y), shell=True, stderr=subprocess.DEVNULL)
     except Exception as e:
         log("Error setting metadata in " + file_name + " : " + str(e))
 
@@ -1121,13 +1136,13 @@ def close_file_metadata_system(cfg, system_metadata_path):
         cfg.write(configfile, space_around_delimiters=False)
 
 
-def set_file_metadata_system(cfg, name, scale, x, y, just_scale):
+def set_file_metadata_system(file_manager_index, cfg, name, scale, x, y, just_scale):
     if not name in cfg:
         log(name + " section not found")
         return
-    cfg[name][STRING_SCALE_SYSTEM] = str(scale)
+    cfg[name][FILE_MANAGER_PARAMETERS[file_manager_index][1]] = str(scale)
     if not just_scale:
-        cfg[name][STRING_POSITION_SYSTEM] = str(x) + "," + str(y)
+        cfg[name][FILE_MANAGER_PARAMETERS[file_manager_index][2]] = str(x) + "," + str(y)
 
 
 def refresh_items(basepath, elements):
@@ -1150,6 +1165,7 @@ def save_config(window):
     config = configparser.ConfigParser()
     config["DesktopIconSize"] = {}
     config["DesktopIconSize"]["profile"] = str(window.active_profile)
+    config["DesktopIconSize"]["filemanager"] = str(window.file_manager_index)
     config["DesktopIconSize"]["system"] = str(window.manage_system_elements)
     for i in range(len(window.organizations)):
         config["Profile" + str(i + 1)] = {}
@@ -1184,7 +1200,7 @@ def save_config(window):
     write_config_file(config)
 
 
-def load_config(window):
+def load_config(window, only_initial=False):
     config = configparser.ConfigParser()
     config_file = get_config_file_path()
     log("Reading config file " + config_file)
@@ -1194,8 +1210,11 @@ def load_config(window):
         return
     log("Main section found")
     window.active_profile = int(config["DesktopIconSize"].get("profile", "0"))
+    window.file_manager_index = int(config["DesktopIconSize"].get("filemanager", "0"))
     str_system = config["DesktopIconSize"].get("system", "False")
     window.manage_system_elements = str_system.lower() == "true"
+    if only_initial:
+        return
     for i in range(NUM_PROFILES):
         cprofile = "Profile" + str(i+1)
         if cprofile in config:
@@ -1296,6 +1315,15 @@ def create_header_box(text):
     return box_header
 
 
+def create_combobox(elements, active, function_changed):
+    combo = Gtk.ComboBoxText()
+    for element in elements:
+        combo.append_text(element)
+    combo.set_active(active)
+    combo.connect("changed", function_changed)
+    return combo
+
+
 def restart_nemo():
     # A better way of making nemo reload the metadata is needed
     log("Restarting nemo")
@@ -1341,25 +1369,25 @@ class ProfileHolder:
     def __init__(self):
         self.active_profile = 0
         self.manage_system_elements = False
+        self.file_manager_index = 0
 
         self.screen_resolution = get_monitor_dimensions()
 
         self.desktop_path = get_desktop_path()
-        self.system_metadata_path = get_system_metadata_path()
 
-        elements = get_desktop_list(self.system_metadata_path)
+        load_config(self, True)
+
+        self.system_metadata_path = get_system_metadata_path(self.file_manager_index)
+        elements = get_desktop_list(self.system_metadata_path if self.manage_system_elements else None)
         order_elements = DesktopElement.order_by_name(elements)
         self.organizations = []
         for i in range(NUM_PROFILES):
-            self.organizations.append(Organization(self.screen_resolution[0], self.screen_resolution[1], self.system_metadata_path, self.desktop_path, copy.deepcopy(elements), list(order_elements), False))
+            self.organizations.append(Organization(self.screen_resolution[0], self.screen_resolution[1], self.system_metadata_path, self.desktop_path, copy.deepcopy(elements), list(order_elements), self.file_manager_index, False))
 
         load_config(self)
-        if self.manage_system_elements:
-            for i in range(NUM_PROFILES):
-                self.organizations[i].screen_resolution = self.screen_resolution
-                self.organizations[i].update_settings(self)
-        else:
-            reload_elements(self)
+        for i in range(NUM_PROFILES):
+            self.organizations[i].screen_resolution = self.screen_resolution
+            self.organizations[i].update_settings(self)
 
     def update_list_elements(self):
         pass
