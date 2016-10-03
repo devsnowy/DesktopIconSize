@@ -998,8 +998,8 @@ class DISWindow(Gtk.Window):
     def on_button_apply_clicked(self, event):
         self.organizations[self.active_profile].apply()
         if self.manage_system_elements:
-            restart_nemo()
-            self.log("Nemo restarted")
+            restart_file_manager(self.file_manager_index)
+            self.log("File manager restarted")
 
     def on_button_about_clicked(self, event):
         dialog = AboutInfoDialog(self)
@@ -1324,10 +1324,10 @@ def create_combobox(elements, active, function_changed):
     return combo
 
 
-def restart_nemo():
-    # A better way of making nemo reload the metadata is needed
-    log("Restarting nemo")
-    subprocess.Popen('sh -c "nemo --quit && sleep 1 && nemo"', shell=True, stderr=subprocess.DEVNULL)
+def restart_file_manager(file_manager_index):
+    # A better way of making the file manager reload the metadata is needed
+    log("Restarting file manager")
+    subprocess.Popen(FILE_MANAGER_PARAMETERS[file_manager_index][4], shell=True, stderr=subprocess.DEVNULL)
 
 
 def log(text):
@@ -1399,7 +1399,7 @@ def load_profile(profile_number):
     profile_holder.active_profile = profile_number
     profile_holder.organizations[profile_number].apply()
     if profile_holder.manage_system_elements:
-        restart_nemo()
+        restart_file_manager(profile_holder.file_manager_index)
     save_config(profile_holder)
     print("Applying profile", profile_number, "done")
 
@@ -1410,7 +1410,7 @@ def set_icon_scale(value):
     profile_holder.organizations[profile_holder.active_profile].scale = value
     profile_holder.organizations[profile_holder.active_profile].apply()
     if profile_holder.manage_system_elements:
-        restart_nemo()
+        restart_file_manager(profile_holder.file_manager_index)
     save_config(profile_holder)
     print("Applying scale", value, "done")
 
