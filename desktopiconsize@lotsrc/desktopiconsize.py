@@ -505,7 +505,7 @@ class DISWindow(Gtk.Window):
         self.box_system_icons = create_hbox(BOX_BORDER)
         self.box_file_manager = create_hbox(BOX_BORDER)
 
-        self.label_system_icons = Gtk.Label("Manage system icons. Requires nemo restart to apply changes", xalign=0)
+        self.label_system_icons = Gtk.Label("Manage system icons. Restarts file manager on apply", xalign=0)
         self.switch_system_icons = Gtk.Switch()
         self.switch_system_icons.set_active(False)
         self.switch_system_icons.connect("notify::active", self.on_switch_system_icons_activated)
